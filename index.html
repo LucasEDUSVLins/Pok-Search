@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PokéMeta Pro | PokéMiners API</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-500">
+    
+    <div id="compareModal" class="hidden fixed inset-0 z-[100] bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-900 w-full max-w-4xl rounded-3xl p-8 relative border border-blue-500/30">
+            <button onclick="closeCompare()" class="absolute top-4 right-4 text-2xl hover:text-red-500">✕</button>
+            <div id="compareContent" class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center"></div>
+        </div>
+    </div>
+
+    <nav class="sticky top-0 z-50 p-4 border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <h1 class="text-2xl font-black italic text-blue-600 tracking-tighter">POKÉ<span class="text-slate-400">META</span></h1>
+            <div class="flex gap-4 items-center w-full md:w-auto">
+                <div class="relative w-full">
+                    <input type="text" id="searchInput" placeholder="Buscar no Meta..." class="w-full bg-slate-100 dark:bg-slate-900 px-5 py-2 rounded-full text-sm outline-none focus:ring-2 ring-blue-500 transition-all">
+                </div>
+                <span id="compareCount" class="whitespace-nowrap text-[10px] uppercase font-bold bg-blue-600 text-white px-3 py-1.5 rounded-full">0/2 Selecionados</span>
+                <button id="themeBtn" class="p-2 rounded-full border dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">🌓</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-6">
+        <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            </div>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+</html>
