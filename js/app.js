@@ -1,5 +1,6 @@
 const POKE_API = {
-    GO_DATA: 'https://raw.githubusercontent.com/BrunnerLivio/Pokemon-GO-Data/master/pokemon.json',
+    // Link via JSDelivr para evitar bloqueios de segurança (CORS)
+    GO_DATA: 'https://cdn.jsdelivr.net/gh/BrunnerLivio/Pokemon-GO-Data@master/pokemon.json',
     SPRITE: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/'
 };
 
@@ -14,153 +15,72 @@ const COLORS = {
 
 let allPokemonGO = [];
 
-// Carregamento inicial
 async function initSearch() {
     try {
         const res = await fetch(POKE_API.GO_DATA);
+        if (!res.ok) throw new Error();
         allPokemonGO = await res.json();
-        console.log("Base GO carregada com sucesso.");
+        console.log("Base GO Sincronizada.");
     } catch (err) {
-        console.error("Erro ao carregar base GO:", err);
+        document.getElementById('grid').innerHTML = '<p style="color:red; text-align:center;">Erro na conexão com a base de dados.</p>';
     }
 }
 
-// Renderização do Card
 function renderGoCard(p) {
     const grid = document.getElementById('grid');
     const type = p.types[0].toLowerCase();
     const color = COLORS[type] || ['#94a3b8', '#475569'];
-    const eggInfo = p.egg === "Not in Eggs" ? "Apenas Captura" : p.egg;
-    const candyCost = p.evolution?.candy_cost ? `${p.evolution.candy_cost} Doces` : "N/A";
-    const stages = p.evolution?.next_evolution ? p.evolution.next_evolution.length : 0;
 
     grid.innerHTML = `
         <article class="pokemon-card">
             <div class="card-banner" style="background: linear-gradient(135deg, ${color[0]}, ${color[1]})">
-                <img src="${POKE_API.SPRITE}${p.id}.png" class="pokemon-sprite" alt="${p.name}">
+                <img src="${POKE_API.SPRITE}${p.id}.png" class="pokemon-sprite">
             </div>
             <div class="card-info">
                 <div class="title-row">
-                    <div>
-                        <p class="tagline">ID #${p.id}</p>
-                        <h2 class="name">${p.name}</h2>
-                    </div>
-                    <div style="text-align:right">
-                        <span class="bst-num">CP ${p.maxCP}</span>
-                        <p class="tagline" style="margin-top:5px">CP MÁXIMO</p>
-                    </div>
+                    <div><p class="tagline">ID #${p.id}</p><h2 class="name">${p.name}</h2></div>
+                    <div style="text-align:right"><span class="bst-num">CP ${p.maxCP}</span></div>
                 </div>
                 <div class="go-details-grid">
-                    <div class="detail-item"><strong>Linhagem</strong><span>${stages} Evoluções</span></div>
-                    <div class="detail-item"><strong>Custo Evolução</strong><span>${candyCost}</span></div>
-                    <div class="detail-item"><strong>Obtenção por Ovo</strong><span>${eggInfo}</span></div>
-                    <div class="detail-item"><strong>Distância Buddy</strong><span>${p.buddyDistance || 0} km</span></div>
+                    <div class="detail-item"><strong>Custo</strong><span>${p.evolution?.candy_cost || 'N/A'} Doces</span></div>
+                    <div class="detail-item"><strong>Ovo</strong><span>${p.egg === "Not in Eggs" ? "Não" : p.egg}</span></div>
+                    <div class="detail-item"><strong>Buddy</strong><span>${p.buddyDistance || 0}km</span></div>
+                    <div class="detail-item"><strong>Evoluções</strong><span>${p.evolution?.next_evolution?.length || 0}</span></div>
                 </div>
-                <div class="stat-label">Status Máximos (Base)</div>
                 <div class="stats-row">
-                    <p><strong>ATK</strong> ${p.stats.attack}</p>
-                    <p><strong>DEF</strong> ${p.stats.defense}</p>
-                    <p><strong>STA</strong> ${p.stats.stamina}</p>
-                </div>
-                <div class="data-source">
-                    <small>DADOS REAIS EXTRAÍDOS DO POKÉMON GO</small>
+                    <p><strong>ATK</strong> ${p.stats.attack}</p><p><strong>DEF</strong> ${p.stats.defense}</p><p><strong>STA</strong> ${p.stats.stamina}</p>
                 </div>
             </div>
         </article>`;
 }
 
-// Funções de Busca
 async function findElite() {
-    const input = document.getElementById('searchInput');
-    const grid = document.getElementById('grid');
-    const query = input.value.toLowerCase().trim().replace(/\s+/g, '-');
+    const query = document.getElementById('searchInput').value.toLowerCase().trim().replace(/\s+/g, '-');
+    if (!query || allPokemonGO.length === 0) return;
 
-    if (!query) return;
-
-    // Animação da Pinap
-    const logoIcon = document.querySelector('.logo-pinap');
-    if (logoIcon) {
-        logoIcon.classList.remove('animate-jump');
-        void logoIcon.offsetWidth;
-        logoIcon.classList.add('animate-jump');
-    }
-
-    grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">BUSCANDO...</p>`;
-
-    // Busca exata ou por slug
-    const pokemon = allPokemonGO.find(p =>
-        p.slug === query ||
-        p.name.toLowerCase() === query.replace(/-/g, ' ')
-    );
-
-    if (!pokemon) {
-        grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">NÃO ENCONTRADO NO GO</p>`;
-        return;
-    }
-    renderGoCard(pokemon);
+    const pokemon = allPokemonGO.find(p => p.slug === query || p.name.toLowerCase() === query);
+    pokemon ? renderGoCard(pokemon) : alert("Não encontrado!");
 }
 
-// Elementos da Interface
-const searchInput = document.getElementById('searchInput');
-const suggestionsBox = document.getElementById('customSuggestions');
-const themeToggle = document.getElementById('themeToggle');
-const clearBtn = document.getElementById('clearSearch');
+// Eventos
+document.getElementById('searchInput').addEventListener('input', (e) => {
+    const val = e.target.value.toLowerCase().trim();
+    const box = document.getElementById('customSuggestions');
+    box.innerHTML = '';
 
-// Lógica de Sugestão Única e Corrigida
-searchInput.addEventListener('input', () => {
-    const value = searchInput.value.toLowerCase().trim();
-    if (value.length < 1) {
-        suggestionsBox.style.display = 'none';
-        return;
-    }
-
-    const filtered = allPokemonGO
-        .filter(p => p.slug.includes(value) || p.name.toLowerCase().includes(value))
-        .slice(0, 8);
-
-    if (filtered.length > 0) {
-        suggestionsBox.innerHTML = '';
-        suggestionsBox.style.display = 'block';
-        filtered.forEach(p => {
+    if (val.length > 0) {
+        const matches = allPokemonGO.filter(p => p.slug.includes(val)).slice(0, 5);
+        matches.forEach(p => {
             const div = document.createElement('div');
             div.className = 'suggestion-item';
             div.textContent = p.name;
-            div.onclick = () => {
-                searchInput.value = p.name;
-                suggestionsBox.style.display = 'none';
-                renderGoCard(p);
-            };
-            suggestionsBox.appendChild(div);
+            div.onclick = () => { renderGoCard(p); box.style.display = 'none'; document.getElementById('searchInput').value = p.name; };
+            box.appendChild(div);
         });
-    } else {
-        suggestionsBox.style.display = 'none';
-    }
+        box.style.display = matches.length ? 'block' : 'none';
+    } else { box.style.display = 'none'; }
 });
 
-// Eventos de Teclado e Tema
-searchInput.addEventListener('keypress', e => {
-    if (e.key === 'Enter') {
-        suggestionsBox.style.display = 'none';
-        findElite();
-    }
-});
+document.getElementById('searchInput').addEventListener('keypress', e => e.key === 'Enter' && findElite());
 
-themeToggle?.addEventListener('click', () => {
-    document.body.classList.toggle('dark-mode');
-    localStorage.setItem('dark-theme', document.body.classList.contains('dark-mode'));
-});
-
-if (localStorage.getItem('dark-theme') === 'true') document.body.classList.add('dark-mode');
-
-clearBtn?.addEventListener('click', () => {
-    searchInput.value = '';
-    suggestionsBox.style.display = 'none';
-    searchInput.focus();
-});
-
-document.addEventListener('click', (e) => {
-    if (!e.target.closest('.search-box')) suggestionsBox.style.display = 'none';
-});
-
-// Inicializa
 initSearch();
