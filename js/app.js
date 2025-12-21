@@ -14,41 +14,57 @@ let allPokemonNames = [];
 
 async function initSearch() {
     try {
-        const res = await fetch(`${POKE_API}pokemon?limit=1000`);
+        const res = await fetch(`${POKE_API}pokemon?limit=1025`);
         const data = await res.json();
         allPokemonNames = data.results.map(p => p.name);
-        console.log("Nomes carregados:", allPokemonNames.length);
-    } catch (err) {
-        console.error("Erro ao carregar lista de nomes");
-    }
+    } catch (err) { console.error("Erro ao carregar nomes"); }
 }
 
 async function findElite() {
+    const logoIcon = document.querySelector('.logo-pinap');
+    if (logoIcon) {
+        logoIcon.classList.remove('animate-jump');
+        void logoIcon.offsetWidth;
+        logoIcon.classList.add('animate-jump');
+    }
+
     const input = document.getElementById('searchInput');
     const grid = document.getElementById('grid');
     const query = input.value.toLowerCase().trim();
-
     if (!query) return;
 
-    grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">BUSCANDO...</p>`;
+    grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">ESCANEANDO POKÉAPI...</p>`;
 
     try {
-        const p = await fetch(`${POKE_API}pokemon/${query}`).then(r => {
-            if (!r.ok) throw new Error("Não encontrado");
-            return r.json();
-        });
+        const p = await fetch(`${POKE_API}pokemon/${query}`).then(r => r.json());
         const s = await fetch(p.species.url).then(r => r.json());
-        renderCard(p, s);
+
+        const evoRes = await fetch(s.evolution_chain.url);
+        const evoData = await evoRes.json();
+
+        renderFullCard(p, s, evoData);
     } catch (err) {
-        grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">POKÉMON NÃO ENCONTRADO</p>`;
+        grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">NÃO ENCONTRADO NA POKÉAPI</p>`;
     }
 }
 
-function renderCard(p, s) {
+function renderFullCard(p, s, evo) {
     const grid = document.getElementById('grid');
     const type = p.types[0].type.name;
     const color = COLORS[type] || ['#94a3b8', '#475569'];
     const bst = p.stats.reduce((acc, stat) => acc + stat.base_stat, 0);
+
+    let evoCount = 0;
+    let curr = evo.chain;
+    while (curr && curr.evolves_to.length > 0) {
+        evoCount++;
+        curr = curr.evolves_to[0];
+    }
+
+    const nextEvo = evo.chain.evolves_to[0]?.evolution_details[0];
+    const requirement = nextEvo ?
+        (nextEvo.min_level ? `Level ${nextEvo.min_level}` : nextEvo.item ? nextEvo.item.name : nextEvo.trigger.name)
+        : "Final ou Único";
 
     grid.innerHTML = `
         <article class="pokemon-card" style="border-color: ${color[0]}">
@@ -63,65 +79,68 @@ function renderCard(p, s) {
                         <p class="tagline">BST TOTAL</p>
                     </div>
                 </div>
+
                 <div class="go-details-grid">
-                    <div class="detail-item"><strong>Tipo</strong><span style="color:${color[1]}">${type}</span></div>
-                    <div class="detail-item"><strong>Peso</strong><span>${p.weight / 10} kg</span></div>
-                    <div class="detail-item"><strong>Altura</strong><span>${p.height / 10} m</span></div>
-                    <div class="detail-item"><strong>Base XP</strong><span>${p.base_experience}</span></div>
+                    <div class="detail-item"><strong>Evoluções</strong><span>${evoCount} estágios</span></div>
+                    <div class="detail-item"><strong>Requisito</strong><span>${requirement}</span></div>
+                    <div class="detail-item"><strong>Grupo Ovo</strong><span>${s.egg_groups[0]?.name || 'N/A'}</span></div>
+                    <div class="detail-item"><strong>Felicidade</strong><span>${s.base_happiness}</span></div>
                 </div>
-                <div class="stat-label">Status de Base</div>
+
+                <div class="stat-label">Status Máximos (Base)</div>
                 <div class="stats-row">
                     <p><strong>ATK</strong> ${p.stats[1].base_stat}</p>
                     <p><strong>DEF</strong> ${p.stats[2].base_stat}</p>
-                    <p><strong>SPD</strong> ${p.stats[5].base_stat}</p>
+                    <p><strong>HP</strong> ${p.stats[0].base_stat}</p>
                 </div>
+                <div class="data-source"><small>📚 FONTE: DADOS REAIS POKÉAPI OFICIAL</small></div>
             </div>
         </article>`;
 }
 
 const searchInput = document.getElementById('searchInput');
 const box = document.getElementById('customSuggestions');
+const themeToggle = document.getElementById('themeToggle');
+const clearBtn = document.getElementById('clearSearch');
 
-if (searchInput && box) {
-    searchInput.addEventListener('input', () => {
-        const val = searchInput.value.toLowerCase().trim();
-        box.innerHTML = '';
+searchInput?.addEventListener('input', () => {
+    const val = searchInput.value.toLowerCase().trim();
+    box.innerHTML = '';
+    if (clearBtn) clearBtn.style.display = val.length > 0 ? 'block' : 'none';
 
-        if (val.length > 0) {
-            const matches = allPokemonNames.filter(n => n.includes(val)).slice(0, 6);
-            if (matches.length > 0) {
-                box.style.display = 'block';
-                matches.forEach(name => {
-                    const div = document.createElement('div');
-                    div.className = 'suggestion-item';
-                    div.textContent = name;
-                    div.onclick = () => {
-                        searchInput.value = name;
-                        box.style.display = 'none';
-                        findElite();
-                    };
-                    box.appendChild(div);
-                });
-            } else {
-                box.style.display = 'none';
-            }
-        } else {
-            box.style.display = 'none';
-        }
-    });
-}
-
-searchInput.addEventListener('keypress', e => {
-    if (e.key === 'Enter') {
-        box.style.display = 'none';
-        findElite();
-    }
+    if (val.length > 0) {
+        const matches = allPokemonNames.filter(n => n.includes(val)).slice(0, 6);
+        if (matches.length > 0) {
+            box.style.display = 'block';
+            matches.forEach(name => {
+                const div = document.createElement('div');
+                div.className = 'suggestion-item';
+                div.textContent = name;
+                div.onclick = () => {
+                    searchInput.value = name;
+                    box.style.display = 'none';
+                    findElite();
+                };
+                box.appendChild(div);
+            });
+        } else box.style.display = 'none';
+    } else box.style.display = 'none';
 });
 
-document.addEventListener('click', (e) => {
-    if (!e.target.closest('.search-box')) {
-        box.style.display = 'none';
-    }
+themeToggle?.addEventListener('click', () => {
+    const isDark = document.body.classList.toggle('dark-mode');
+    localStorage.setItem('dark-theme', isDark);
 });
+if (localStorage.getItem('dark-theme') === 'true') document.body.classList.add('dark-mode');
+
+clearBtn?.addEventListener('click', () => {
+    searchInput.value = '';
+    box.style.display = 'none';
+    clearBtn.style.display = 'none';
+    searchInput.focus();
+});
+
+searchInput?.addEventListener('keypress', e => e.key === 'Enter' && (box.style.display = 'none', findElite()));
+document.addEventListener('click', e => !e.target.closest('.search-box') && (box.style.display = 'none'));
 
 initSearch();
