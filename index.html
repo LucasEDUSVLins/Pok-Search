@@ -1,41 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokéMeta | Catálogo</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PokéMeta | Catálogo</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body class="bg-gray-100 text-gray-900 font-sans">
-    
-    <div id="compareModal" class="hidden fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-4xl rounded-2xl p-8 relative shadow-2xl">
-            <button onclick="closeCompare()" class="absolute top-4 right-4 text-2xl font-bold">✕</button>
-            <div id="compareContent" class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center text-center"></div>
+
+  <div id="compareModal" class="hidden fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-4xl rounded-2xl p-8 relative shadow-2xl">
+      <button onclick="closeCompare()" class="absolute top-4 right-4 text-2xl font-bold hover:text-red-500 transition-colors">✕</button>
+      <div id="compareContent" class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center text-center">
         </div>
     </div>
+  </div>
 
-    <nav class="sticky top-0 z-50 p-4 border-b bg-white shadow-sm">
-        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-            <h1 class="text-2xl font-black text-blue-600">POKÉMETA</h1>
-            <div class="relative w-full md:w-64">
-    <input type="text" id="searchInput" placeholder="Buscar Pokémon..." 
-        class="w-full bg-gray-50 border border-gray-300 px-4 py-2 pr-10 rounded-lg outline-none focus:ring-2 ring-blue-500 transition-all">
-    <button id="clearSearch" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
-        ✕
-    </button>
-</div>
+  <nav class="sticky top-0 z-50 p-4 border-b bg-white shadow-sm">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      
+      <h1 class="text-2xl font-black text-blue-600 tracking-tighter">POKÉMETA</h1>
 
-        </div>
-    </nav>
+      <div class="relative w-full md:w-64">
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="Buscar Pokémon..." 
+          class="w-full bg-gray-50 border border-gray-300 px-4 py-2 pr-10 rounded-lg outline-none focus:ring-2 ring-blue-500 transition-all"
+        >
+        <button 
+          id="clearSearch" 
+          class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-blue-500 transition-colors"
+        >
+          ✕
+        </button>
+      </div>
 
-    <main class="max-w-7xl mx-auto p-6">
-        <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
-            <p id="loadingMsg" class="col-span-full py-10">Carregando dados da API...</p>
-        </div>
-    </main>
+    </div>
+  </nav>
 
-    <script src="js/app.js"></script>
+  <main class="max-w-7xl mx-auto p-6">
+    <div id="grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
+      <p id="loadingMsg" class="col-span-full py-20 text-gray-500 animate-pulse">
+        Conectando à PokéAPI...
+      </p>
+    </div>
+  </main>
+
+  <script src="js/app.js"></script>
+
 </body>
 </html>
