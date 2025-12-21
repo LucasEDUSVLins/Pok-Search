@@ -35,7 +35,7 @@ async function findElite() {
         grid.innerHTML = `
             <article class="pokemon-card">
                 <div class="card-banner" style="background: linear-gradient(135deg, ${color[0]}, ${color[1]})">
-                    <img src="${POKE_API.SPRITE}${elite.id}.png" class="pokemon-sprite">
+                    <img src="${POKE_API.SPRITE}${elite.id}.png" class="pokemon-sprite" alt="${elite.name}">
                 </div>
                 <div class="card-info">
                     <div class="title-row">
