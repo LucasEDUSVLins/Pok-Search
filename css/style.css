@@ -211,6 +211,40 @@ body.dark-mode {
     transition: width 1s ease-out;
 }
 
+.suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    border-radius: 0 0 1rem 1rem;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+    max-height: 250px;
+    overflow-y: auto;
+    z-index: 100;
+    display: none;
+    border: 1px solid #e2e8f0;
+    margin-top: -5px;
+}
+
+.suggestion-item {
+    padding: 1rem 1.5rem;
+    cursor: pointer;
+    text-align: left;
+    border-bottom: 1px solid #f1f5f9;
+    text-transform: capitalize;
+    color: var(--text-main);
+}
+
+.suggestion-item:hover {
+    background: #f8fafc;
+    color: var(--primary);
+}
+
+body.dark-mode .suggestion-item:hover {
+    background: #334155;
+}
+
 @keyframes pop {
     from {
         transform: scale(0.95);

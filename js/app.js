@@ -12,6 +12,16 @@ const COLORS = {
     bug: ['#a3e635', '#4d7c0f'], ghost: ['#818cf8', '#4c1d95'], steel: ['#94a3b8', '#475569']
 };
 
+let allPokemonNames = [];
+
+async function initSearch() {
+    try {
+        const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
+        const data = await res.json();
+        allPokemonNames = data.results.map(p => p.name);
+    } catch (err) { console.error("Erro ao carregar nomes"); }
+}
+
 async function findElite() {
     const input = document.getElementById('searchInput');
     const grid = document.getElementById('grid');
@@ -58,42 +68,52 @@ async function findElite() {
     }
 }
 
-const themeToggle = document.getElementById('themeToggle');
 
-if (themeToggle) {
-    themeToggle.addEventListener('click', () => {
-        document.body.classList.toggle('dark-mode');
-        const isDark = document.body.classList.contains('dark-mode');
-        localStorage.setItem('dark-theme', isDark);
-    });
-}
-
-if (localStorage.getItem('dark-theme') === 'true') {
-    document.body.classList.add('dark-mode');
-}
-
-const clearBtn = document.getElementById('clearSearch');
 const searchInput = document.getElementById('searchInput');
+const suggestionsBox = document.getElementById('customSuggestions');
+const themeToggle = document.getElementById('themeToggle');
+const clearBtn = document.getElementById('clearSearch');
 
-clearBtn.addEventListener('click', () => {
+searchInput.addEventListener('input', () => {
+    const value = searchInput.value.toLowerCase();
+    suggestionsBox.innerHTML = '';
+
+    if (value.length > 0) {
+        const filtered = allPokemonNames.filter(name => name.startsWith(value)).slice(0, 10);
+        if (filtered.length > 0) {
+            suggestionsBox.style.display = 'block';
+            filtered.forEach(name => {
+                const div = document.createElement('div');
+                div.classList.add('suggestion-item');
+                div.textContent = name;
+                div.onclick = () => {
+                    searchInput.value = name;
+                    suggestionsBox.style.display = 'none';
+                    findElite();
+                };
+                suggestionsBox.appendChild(div);
+            });
+        } else { suggestionsBox.style.display = 'none'; }
+    } else { suggestionsBox.style.display = 'none'; }
+});
+
+themeToggle?.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    localStorage.setItem('dark-theme', document.body.classList.contains('dark-mode'));
+});
+
+if (localStorage.getItem('dark-theme') === 'true') document.body.classList.add('dark-mode');
+
+clearBtn?.addEventListener('click', () => {
     searchInput.value = '';
+    suggestionsBox.style.display = 'none';
     searchInput.focus();
 });
 
-async function loadSuggestions() {
-    const datalist = document.getElementById('pokeSuggestions');
-    try {
-        const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
-        const data = await res.json();
+searchInput?.addEventListener('keypress', e => e.key === 'Enter' && (suggestionsBox.style.display = 'none', findElite()));
 
-        datalist.innerHTML = data.results
-            .map(p => `<option value="${p.name.charAt(0).toUpperCase() + p.name.slice(1)}">`)
-            .join('');
-    } catch (err) {
-        console.error("Erro ao carregar sugestões");
-    }
-}
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-box')) suggestionsBox.style.display = 'none';
+});
 
-loadSuggestions();
-
-document.getElementById('searchInput')?.addEventListener('keypress', e => e.key === 'Enter' && findElite());
+initSearch();
