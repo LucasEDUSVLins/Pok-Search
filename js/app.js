@@ -17,23 +17,30 @@ async function initSearch() {
         const res = await fetch(`${POKE_API}pokemon?limit=1000`);
         const data = await res.json();
         allPokemonNames = data.results.map(p => p.name);
-    } catch (err) { console.error("Erro ao carregar lista"); }
+        console.log("Nomes carregados:", allPokemonNames.length);
+    } catch (err) {
+        console.error("Erro ao carregar lista de nomes");
+    }
 }
 
 async function findElite() {
     const input = document.getElementById('searchInput');
     const grid = document.getElementById('grid');
     const query = input.value.toLowerCase().trim();
+
     if (!query) return;
 
-    grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">CARREGANDO...</p>`;
+    grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">BUSCANDO...</p>`;
 
     try {
-        const p = await fetch(`${POKE_API}pokemon/${query}`).then(r => r.json());
+        const p = await fetch(`${POKE_API}pokemon/${query}`).then(r => {
+            if (!r.ok) throw new Error("Não encontrado");
+            return r.json();
+        });
         const s = await fetch(p.species.url).then(r => r.json());
         renderCard(p, s);
     } catch (err) {
-        grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">NÃO ENCONTRADO</p>`;
+        grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">POKÉMON NÃO ENCONTRADO</p>`;
     }
 }
 
@@ -44,7 +51,7 @@ function renderCard(p, s) {
     const bst = p.stats.reduce((acc, stat) => acc + stat.base_stat, 0);
 
     grid.innerHTML = `
-        <article class="pokemon-card">
+        <article class="pokemon-card" style="border-color: ${color[0]}">
             <div class="card-banner" style="background: linear-gradient(135deg, ${color[0]}, ${color[1]})">
                 <img src="${SPRITE_URL}${p.id}.png" class="pokemon-sprite">
             </div>
@@ -75,27 +82,46 @@ function renderCard(p, s) {
 const searchInput = document.getElementById('searchInput');
 const box = document.getElementById('customSuggestions');
 
-searchInput.addEventListener('input', () => {
-    const val = searchInput.value.toLowerCase().trim();
-    box.innerHTML = '';
-    if (val.length > 0) {
-        const matches = allPokemonNames.filter(n => n.includes(val)).slice(0, 6);
-        matches.forEach(name => {
-            const div = document.createElement('div');
-            div.className = 'suggestion-item';
-            div.textContent = name;
-            div.onclick = () => {
-                searchInput.value = name;
+if (searchInput && box) {
+    searchInput.addEventListener('input', () => {
+        const val = searchInput.value.toLowerCase().trim();
+        box.innerHTML = '';
+
+        if (val.length > 0) {
+            const matches = allPokemonNames.filter(n => n.includes(val)).slice(0, 6);
+            if (matches.length > 0) {
+                box.style.display = 'block';
+                matches.forEach(name => {
+                    const div = document.createElement('div');
+                    div.className = 'suggestion-item';
+                    div.textContent = name;
+                    div.onclick = () => {
+                        searchInput.value = name;
+                        box.style.display = 'none';
+                        findElite();
+                    };
+                    box.appendChild(div);
+                });
+            } else {
                 box.style.display = 'none';
-                findElite();
-            };
-            box.appendChild(div);
-        });
-        box.style.display = matches.length ? 'block' : 'none';
-    } else { box.style.display = 'none'; }
+            }
+        } else {
+            box.style.display = 'none';
+        }
+    });
+}
+
+searchInput.addEventListener('keypress', e => {
+    if (e.key === 'Enter') {
+        box.style.display = 'none';
+        findElite();
+    }
 });
 
-searchInput.addEventListener('keypress', e => e.key === 'Enter' && findElite());
-document.addEventListener('click', (e) => !e.target.closest('.search-box') && (box.style.display = 'none'));
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.search-box')) {
+        box.style.display = 'none';
+    }
+});
 
 initSearch();
