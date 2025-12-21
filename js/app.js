@@ -1,5 +1,5 @@
 /**
- * POKÉMETA - Versão Mestre (Cores, Proteção e Dados Reais)
+ * POKÉMETA - Versão Definitiva (Cores via CSS HEX)
  */
 
 const CONFIG = {
@@ -7,26 +7,27 @@ const CONFIG = {
   IMG_BASE: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/'
 };
 
-// Mapa de Cores (Tailwind)
+// Mapa de Cores HEX (Garante que a cor apareça independente do Tailwind)
+// Formato: [Cor de Cima, Cor de Baixo]
 const TYPE_COLORS = {
-  fire: 'from-orange-500 to-red-600',
-  water: 'from-blue-500 to-cyan-600',
-  grass: 'from-green-500 to-emerald-600',
-  electric: 'from-yellow-400 to-yellow-600',
-  psychic: 'from-pink-500 to-purple-600',
-  ice: 'from-cyan-400 to-blue-400',
-  dragon: 'from-purple-600 to-indigo-700',
-  dark: 'from-gray-700 to-black',
-  fairy: 'from-pink-300 to-rose-400',
-  normal: 'from-gray-400 to-gray-500',
-  fighting: 'from-orange-700 to-red-800',
-  flying: 'from-sky-400 to-blue-500',
-  poison: 'from-purple-500 to-fuchsia-600',
-  ground: 'from-amber-600 to-orange-700',
-  rock: 'from-stone-500 to-stone-700',
-  bug: 'from-lime-500 to-green-600',
-  ghost: 'from-indigo-800 to-purple-900',
-  steel: 'from-slate-400 to-gray-500'
+  fire:     ['#FB923C', '#DC2626'], // Laranja -> Vermelho
+  water:    ['#60A5FA', '#2563EB'], // Azul Claro -> Azul
+  grass:    ['#4ADE80', '#16A34A'], // Verde Claro -> Verde
+  electric: ['#FACC15', '#CA8A04'], // Amarelo -> Ouro
+  psychic:  ['#F472B6', '#9333EA'], // Rosa -> Roxo
+  ice:      ['#22D3EE', '#3B82F6'], // Ciano -> Azul
+  dragon:   ['#818CF8', '#4F46E5'], // Indigo
+  dark:     ['#4B5563', '#111827'], // Cinza Escuro -> Preto
+  fairy:    ['#F9A8D4', '#E11D48'], // Rosa -> Rosa Escuro
+  normal:   ['#9CA3AF', '#6B7280'], // Cinza
+  fighting: ['#FB923C', '#991B1B'], // Laranja -> Marrom
+  flying:   ['#7DD3FC', '#3B82F6'], // Céu -> Azul
+  poison:   ['#C084FC', '#7E22CE'], // Roxo Claro -> Roxo
+  ground:   ['#D97706', '#92400E'], // Marrom Terra
+  rock:     ['#78716C', '#44403C'], // Pedra
+  bug:      ['#A3E635', '#4D7C0F'], // Lima -> Verde Musgo
+  ghost:    ['#818CF8', '#4C1D95'], // Roxo Fantasma
+  steel:    ['#94A3B8', '#475569']  // Metálico
 };
 
 let pokemonList = [];
@@ -36,15 +37,13 @@ const grid = document.getElementById('grid');
 const searchInput = document.getElementById('searchInput');
 const clearBtn = document.getElementById('clearSearch');
 
-// --- INICIALIZAÇÃO BLINDADA (Restaurada) ---
 async function start() {
   try {
-    // Timeout de segurança
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     const res = await fetch(CONFIG.API_URL, { signal: controller.signal });
-    clearTimeout(timeoutId); // Cancela o timeout se der certo
+    clearTimeout(timeoutId);
 
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
@@ -58,23 +57,14 @@ async function start() {
     render(pokemonList);
 
   } catch (err) {
-    console.error("Erro Blindado:", err);
-    if (grid) {
-      grid.innerHTML = `
-        <div class="col-span-full py-20 text-center">
-          <p class="text-red-500 font-bold mb-4">Falha na conexão.</p>
-          <button onclick="location.reload()" class="bg-blue-600 text-white px-6 py-2 rounded-full text-sm hover:bg-blue-700">Tentar Novamente</button>
-        </div>
-      `;
-    }
+    console.error("Erro:", err);
+    if (grid) grid.innerHTML = `<div class="col-span-full py-20 text-center"><p class="text-red-500 font-bold">Erro de conexão.</p><button onclick="location.reload()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-full">Recarregar</button></div>`;
   }
 }
 
 function render(list) {
   if (!grid) return;
   grid.innerHTML = '';
-  
-  // Mostra os 100 primeiros ou o resultado da busca para performance
   const displayList = searchInput.value.length > 0 ? list : list.slice(0, 100);
 
   grid.innerHTML = displayList.map(p => {
@@ -92,32 +82,35 @@ function render(list) {
   }).join('');
 }
 
-// --- DETALHES COM CORES DINÂMICAS ---
+// --- FUNÇÃO DE DETALHES (CORRIGIDA COM INLINE STYLES) ---
 async function showDetails(id) {
   const modal = document.getElementById('detailsModal');
   const content = document.getElementById('detailsContent');
   
   if (!modal || !content) return;
-
   modal.classList.remove('hidden');
-  content.innerHTML = `<div class="p-10 text-center animate-pulse text-xs font-bold text-gray-400">BUSCANDO DADOS...</div>`;
+  content.innerHTML = `<div class="p-10 text-center animate-pulse text-xs font-bold text-gray-400">CARREGANDO...</div>`;
 
   try {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
     const data = await res.json();
     
-    // Cores Dinâmicas
+    // Pega as cores baseadas no tipo ou usa cinza como padrão
     const mainType = data.types[0].type.name;
-    const bgGradient = TYPE_COLORS[mainType] || 'from-gray-500 to-gray-600';
-    const typesHTML = data.types.map(t => `<span class="px-3 py-1 bg-white/20 text-white backdrop-blur-sm rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm">${t.type.name}</span>`).join(' ');
+    const colors = TYPE_COLORS[mainType] || ['#9CA3AF', '#4B5563'];
+    
+    // Cria o estilo do gradiente manualmente
+    const gradientStyle = `background: linear-gradient(to bottom, ${colors[0]}, ${colors[1]});`;
+
+    const typesHTML = data.types.map(t => `<span class="px-3 py-1 bg-white/20 text-white backdrop-blur-sm rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm border border-white/30">${t.type.name}</span>`).join(' ');
 
     content.innerHTML = `
-      <div class="bg-gradient-to-b ${bgGradient} p-8 text-center relative overflow-hidden">
+      <div class="p-8 text-center relative overflow-hidden transition-colors duration-500" style="${gradientStyle}">
         <div class="absolute top-0 left-0 w-full h-full bg-white/10 opacity-30 pattern-dots"></div>
         <img src="${CONFIG.IMG_BASE}${id}.png" class="w-44 h-44 mx-auto drop-shadow-2xl relative z-10 hover:scale-110 transition-transform duration-500">
       </div>
       
-      <div class="p-8">
+      <div class="p-8 bg-white">
         <div class="flex justify-between items-center mb-6">
           <div class="text-left">
             <h2 class="text-3xl font-black capitalize text-gray-800 leading-none">${data.name}</h2>
@@ -135,14 +128,13 @@ async function showDetails(id) {
       </div>
     `;
   } catch (err) {
-    content.innerHTML = `<div class="p-10 text-center text-red-500">Erro ao carregar dados.</div>`;
+    console.error(err);
+    content.innerHTML = `<div class="p-10 text-center text-red-500">Erro ao carregar detalhes.</div>`;
   }
 }
 
-// Função de fechar (Compatível com seu HTML onclick)
 function closeDetails() {
-  const modal = document.getElementById('detailsModal');
-  if (modal) modal.classList.add('hidden');
+  document.getElementById('detailsModal').classList.add('hidden');
 }
 
 function renderStatBar(label, value, color) {
@@ -212,7 +204,6 @@ function closeCompare() {
   render(pokemonList);
 }
 
-// --- BUSCA ---
 searchInput?.addEventListener('input', (e) => {
   const term = e.target.value.toLowerCase();
   term.length > 0 ? clearBtn.classList.remove('hidden') : clearBtn.classList.add('hidden');
