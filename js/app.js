@@ -107,6 +107,30 @@ function closeCompare() {
     render(pokemonList);
 }
 
+const searchInput = document.getElementById('searchInput');
+const clearBtn = document.getElementById('clearSearch');
+
+searchInput.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    
+    // Mostra/Esconde o X conforme o usuário digita
+    if (term.length > 0) {
+        clearBtn.classList.remove('hidden');
+    } else {
+        clearBtn.classList.add('hidden');
+    }
+    
+    render(pokemonList.filter(p => p.name.includes(term)));
+});
+
+// Ação de limpar ao clicar no X
+clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    clearBtn.classList.add('hidden');
+    render(pokemonList); // Volta a lista completa
+    searchInput.focus();
+});
+
 // Escuta a barra de pesquisa
 document.getElementById('searchInput').addEventListener('input', (e) => {
     const term = e.target.value.toLowerCase();
