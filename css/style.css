@@ -237,19 +237,19 @@ body.dark-mode .logo-pinap {
 
 .suggestions-list {
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 10px);
     left: 0;
     right: 0;
     background: var(--card-bg);
-    border-radius: 1.2rem;
+    border-radius: 1.5rem;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
     max-height: 160px;
     overflow-y: auto;
     overflow-x: hidden;
     z-index: 100;
     display: none;
-    border: 2px solid #e2e8f0;
-    padding: 0.4rem;
+    border: 3px solid #e2e8f0;
+    padding: 0.6rem;
     scrollbar-gutter: stable;
 }
 
