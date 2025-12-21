@@ -62,13 +62,15 @@ body.dark-mode {
 /* Posiciona o X à esquerda da seta padrão do navegador */
 .clear-btn {
     position: absolute;
-    right: 3rem; /* Aumentei de 1.5rem para 3rem para dar espaço à seta */
+    right: 3rem;
+    /* Aumentei de 1.5rem para 3rem para dar espaço à seta */
     background: none;
     border: none;
     font-size: 1.5rem;
     color: var(--text-muted);
     cursor: pointer;
-    z-index: 10; /* Garante que fique clicável */
+    z-index: 10;
+    /* Garante que fique clicável */
     line-height: 1;
 }
 
@@ -84,7 +86,8 @@ body.dark-mode {
 /* Espaçamento da frase "Pressione Enter" */
 .search-hint {
     display: block;
-    margin-top: 1.5rem; /* Aumentado para dar mais "ar" entre a barra e o texto */
+    margin-top: 1.5rem;
+    /* Aumentado para dar mais "ar" entre a barra e o texto */
     font-size: 0.7rem;
     font-weight: 800;
     color: #94a3b8;
@@ -122,7 +125,7 @@ body.dark-mode {
 
 /* Ajuste no padding do input para o texto não passar por baixo do X */
 .search-input {
-    padding-right: 4.5rem !important; 
+    padding-right: 4.5rem !important;
 }
 
 .search-input:focus {
