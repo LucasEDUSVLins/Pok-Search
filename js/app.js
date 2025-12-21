@@ -22,7 +22,7 @@ async function findBestVersion() {
     const grid = document.getElementById('grid');
     if (!query) return;
 
-    grid.innerHTML = `<div class="text-center py-20 font-black text-slate-400 animate-pulse">ESCANEANDO API...</div>`;
+    grid.innerHTML = `<div class="status-msg">ESCANEANDO API...</div>`;
 
     try {
         const speciesRes = await fetch(`${CONFIG.API_SPECIES}${query}`);
@@ -40,7 +40,7 @@ async function findBestVersion() {
 
         renderBest(best, speciesData.name);
     } catch (err) {
-        grid.innerHTML = `<div class="text-center py-20 text-red-500 font-black">ERRO: POKÉMON NÃO ENCONTRADO.</div>`;
+        grid.innerHTML = `<div class="status-msg error-msg">ERRO: POKÉMON NÃO ENCONTRADO.</div>`;
     }
 }
 
@@ -50,29 +50,29 @@ function renderBest(p, originalName) {
     const colors = TYPE_COLORS[mainType] || ['#9CA3AF', '#4B5563'];
     
     document.getElementById('grid').innerHTML = `
-        <div class="animate-pop max-w-2xl mx-auto bg-white rounded-[2rem] shadow-2xl overflow-hidden border-4 border-yellow-400">
-            <div class="p-10 text-center" style="background: linear-gradient(to bottom, ${colors[0]}, ${colors[1]})">
-                <img src="${CONFIG.IMG_BASE}${p.id}.png" class="w-64 h-64 mx-auto drop-shadow-2xl">
+        <div class="pokemon-card animate-pop">
+            <div class="card-header" style="background: linear-gradient(to bottom, ${colors[0]}, ${colors[1]})">
+                <img src="${CONFIG.IMG_BASE}${p.id}.png" class="pokemon-img">
             </div>
-            <div class="p-8">
-                <div class="flex justify-between items-start mb-6">
+            <div class="card-body">
+                <div class="info-row">
                     <div>
-                        <h2 class="text-4xl font-black capitalize text-slate-800">${p.name.replace(/-/g, ' ')}</h2>
-                        <p class="text-slate-400 font-bold uppercase text-[10px]">Origem: ${originalName}</p>
+                        <h2 class="poke-name">${p.name.replace(/-/g, ' ')}</h2>
+                        <p class="poke-origin">Origem: ${originalName}</p>
                     </div>
-                    <div class="text-right">
-                        <p class="text-4xl font-black text-blue-600">${totalStats}</p>
-                        <p class="text-[10px] font-bold text-slate-400">TOTAL BST</p>
+                    <div>
+                        <p class="bst-value">${totalStats}</p>
+                        <p class="bst-label">TOTAL BST</p>
                     </div>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="stats-grid">
                     ${p.stats.map(s => `
-                        <div>
-                            <div class="flex justify-between text-[10px] font-black text-slate-400 uppercase mb-1">
+                        <div class="stat-item">
+                            <div class="stat-label-row">
                                 <span>${s.stat.name}</span><span>${s.base_stat}</span>
                             </div>
-                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                                <div class="bg-blue-500 h-full" style="width: ${(s.base_stat/160)*100}%"></div>
+                            <div class="bar-bg">
+                                <div class="bar-fill" style="width: ${(s.base_stat/160)*100}%"></div>
                             </div>
                         </div>
                     `).join('')}
