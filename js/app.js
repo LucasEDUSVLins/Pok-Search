@@ -25,7 +25,7 @@ async function findElite() {
         const data = await res.json();
         const variants = await Promise.all(data.varieties.map(v => fetch(v.pokemon.url).then(r => r.json())));
 
-        const elite = variants.reduce((a, b) => 
+        const elite = variants.reduce((a, b) =>
             (b.stats.reduce((s, c) => s + c.base_stat, 0) > a.stats.reduce((s, c) => s + c.base_stat, 0)) ? b : a
         );
 
@@ -47,7 +47,7 @@ async function findElite() {
                         ${elite.stats.map(s => `
                             <div class="stat-item">
                                 <div class="stat-label"><span>${s.stat.name}</span><span>${s.base_stat}</span></div>
-                                <div class="bar-bg"><div class="bar-fill" style="width: ${(s.base_stat/160)*100}%; background: ${color[0]}"></div></div>
+                                <div class="bar-bg"><div class="bar-fill" style="width: ${(s.base_stat / 160) * 100}%; background: ${color[0]}"></div></div>
                             </div>
                         `).join('')}
                     </div>
@@ -90,7 +90,7 @@ async function loadSuggestions() {
         // Busca os primeiros 1000 pokémons para sugestão (cache leve)
         const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
         const data = await res.json();
-        
+
         datalist.innerHTML = data.results
             .map(p => `<option value="${p.name.charAt(0).toUpperCase() + p.name.slice(1)}">`)
             .join('');
