@@ -72,8 +72,9 @@ body.dark-mode .logo-pinap {
 .tagline {
     font-weight: 700;
     color: var(--text-muted);
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .theme-btn {
@@ -100,7 +101,6 @@ body.dark-mode .logo-pinap {
     max-width: 500px;
     width: 95%;
     position: relative;
-    /* Importante para o posicionamento absoluto da lista */
 }
 
 .input-wrapper {
@@ -192,51 +192,103 @@ body.dark-mode .logo-pinap {
 .title-row {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 2rem;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
 }
 
 .name {
     font-size: 2.5rem;
     font-weight: 900;
     text-transform: capitalize;
+    line-height: 1.1;
 }
 
 .bst-num {
-    font-size: 3rem;
+    background: var(--primary);
+    color: white !important;
+    padding: 0.5rem 1rem;
+    border-radius: 0.8rem;
+    font-size: 1.2rem !important;
     font-weight: 900;
-    color: var(--primary);
-    line-height: 1;
 }
 
-.stats-grid {
+/* --- GRID DE DETALHES GO --- */
+.go-details-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    background: var(--bar-bg);
+    padding: 1.5rem;
+    border-radius: 1.5rem;
+    margin: 1.5rem 0;
 }
 
-.stat-label {
+.detail-item {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.detail-item strong {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 0.8px;
+}
+
+.detail-item span {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--text-main);
+}
+
+/* Status Horizontais */
+.stat-label {
     font-size: 0.7rem;
     font-weight: 900;
     color: var(--text-muted);
     text-transform: uppercase;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
+    letter-spacing: 1px;
 }
 
-.bar-bg {
-    background: var(--bar-bg);
-    height: 10px;
-    border-radius: 10px;
-    overflow: hidden;
+.stats-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+    border-top: 2px solid var(--bar-bg);
 }
 
-.bar-fill {
-    height: 100%;
-    transition: width 1s ease-out;
+.stats-row p {
+    font-size: 0.85rem;
+    font-weight: 700;
 }
 
+.stats-row strong {
+    color: var(--primary);
+    margin-right: 5px;
+}
+
+/* Selo de Fonte */
+.data-source {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px dashed var(--text-muted);
+    opacity: 0.6;
+}
+
+.data-source small {
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* Sugestões */
 .suggestions-list {
     position: absolute;
     top: calc(100% + 10px);
@@ -247,7 +299,6 @@ body.dark-mode .logo-pinap {
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
     max-height: 160px;
     overflow-y: auto;
-    overflow-x: hidden;
     z-index: 100;
     display: none;
     border: 3px solid #e2e8f0;
@@ -259,16 +310,11 @@ body.dark-mode .logo-pinap {
 
 .suggestions-list::-webkit-scrollbar {
     display: none;
-    width: 0px !important;
-    height: 0px !important;
-    background: transparent !important;
-    display: none !important;
 }
 
 .suggestion-item {
     padding: 0.8rem 1.2rem;
     cursor: pointer;
-    text-align: left;
     border-radius: 0.8rem;
     text-transform: capitalize;
     color: var(--text-main);
@@ -284,10 +330,6 @@ body.dark-mode .logo-pinap {
 
 body.dark-mode .suggestions-list {
     border-color: #334155;
-}
-
-body.dark-mode .suggestion-item:hover {
-    background: #334155;
 }
 
 @keyframes jump-once {
@@ -319,5 +361,15 @@ body.dark-mode .suggestion-item:hover {
     to {
         transform: scale(1);
         opacity: 1;
+    }
+}
+
+@media (max-width: 480px) {
+    .go-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .name {
+        font-size: 2rem;
     }
 }

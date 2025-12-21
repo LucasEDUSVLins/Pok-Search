@@ -1,5 +1,5 @@
 const POKE_API = {
-    SPECIES: 'https://pokeapi.co/api/v2/pokemon-species/',
+    GO_DATA: 'https://raw.githubusercontent.com/BrunnerLivio/Pokemon-GO-Data/master/pokemon.json',
     SPRITE: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/'
 };
 
@@ -12,14 +12,14 @@ const COLORS = {
     bug: ['#a3e635', '#4d7c0f'], ghost: ['#818cf8', '#4c1d95'], steel: ['#94a3b8', '#475569']
 };
 
-let allPokemonNames = [];
+let allPokemonGO = [];
 
 async function initSearch() {
     try {
-        const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
-        const data = await res.json();
-        allPokemonNames = data.results.map(p => p.name);
-    } catch (err) { console.error("Erro ao carregar nomes"); }
+        const res = await fetch(POKE_API.GO_DATA);
+        allPokemonGO = await res.json();
+        console.log("Base de dados GO carregada.");
+    } catch (err) { console.error("Erro ao carregar dados do GO"); }
 }
 
 async function findElite() {
@@ -29,52 +29,92 @@ async function findElite() {
         void logoIcon.offsetWidth;
         logoIcon.classList.add('animate-jump');
     }
+
     const input = document.getElementById('searchInput');
     const grid = document.getElementById('grid');
     const query = input.value.toLowerCase().trim();
     if (!query) return;
 
-    grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">ESCANEANDO...</p>`;
+    grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">SINCRONIZANDO DADOS REAIS GO...</p>`;
 
-    try {
-        const res = await fetch(`${POKE_API.SPECIES}${query}`);
-        const data = await res.json();
-        const variants = await Promise.all(data.varieties.map(v => fetch(v.pokemon.url).then(r => r.json())));
+    // Busca o Pokémon na base do GO carregada
+    const pokemon = allPokemonGO.find(p => p.slug === query || p.id === parseInt(query));
 
-        const elite = variants.reduce((a, b) =>
-            (b.stats.reduce((s, c) => s + c.base_stat, 0) > a.stats.reduce((s, c) => s + c.base_stat, 0)) ? b : a
-        );
-
-        const bst = elite.stats.reduce((s, c) => s + c.base_stat, 0);
-        const type = elite.types[0].type.name;
-        const color = COLORS[type] || ['#94a3b8', '#475569'];
-
-        grid.innerHTML = `
-            <article class="pokemon-card">
-                <div class="card-banner" style="background: linear-gradient(135deg, ${color[0]}, ${color[1]})">
-                    <img src="${POKE_API.SPRITE}${elite.id}.png" class="pokemon-sprite" alt="${elite.name}">
-                </div>
-                <div class="card-info">
-                    <div class="title-row">
-                        <div><p class="tagline">Base: ${data.name}</p><h2 class="name">${elite.name.replace(/-/g, ' ')}</h2></div>
-                        <div style="text-align:right"><p class="bst-num">${bst}</p><p class="tagline">BST TOTAL</p></div>
-                    </div>
-                    <div class="stats-grid">
-                        ${elite.stats.map(s => `
-                            <div class="stat-item">
-                                <div class="stat-label"><span>${s.stat.name}</span><span>${s.base_stat}</span></div>
-                                <div class="bar-bg"><div class="bar-fill" style="width: ${(s.base_stat / 160) * 100}%; background: ${color[0]}"></div></div>
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            </article>`;
-    } catch {
-        grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">POKÉMON NÃO ENCONTRADO</p>`;
+    if (!pokemon) {
+        grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">POKÉMON NÃO ENCONTRADO NA BASE GO</p>`;
+        return;
     }
+
+    renderGoCard(pokemon);
 }
 
+function renderGoCard(p) {
+    const grid = document.getElementById('grid');
 
+    // Tratamento de dados
+    const type = p.types[0].toLowerCase();
+    const color = COLORS[type] || ['#94a3b8', '#475569'];
+    const eggInfo = p.egg === "Not in Eggs" ? "Apenas Captura" : p.egg;
+    const candyCost = p.evolution?.candy_cost ? `${p.evolution.candy_cost} Doces` : "N/A";
+    const stages = p.evolution?.next_evolution ? p.evolution.next_evolution.length : 0;
+
+    grid.innerHTML = `
+        <article class="pokemon-card">
+            <div class="card-banner" style="background: linear-gradient(135deg, ${color[0]}, ${color[1]})">
+                <img src="${POKE_API.SPRITE}${p.id}.png" class="pokemon-sprite" alt="${p.name}">
+            </div>
+            
+            <div class="card-info">
+                <div class="title-row">
+                    <div>
+                        <p class="tagline">ID #${p.id}</p>
+                        <h2 class="name">${p.name}</h2>
+                    </div>
+                    <div style="text-align:right">
+                        <span class="bst-num">CP ${p.maxCP}</span>
+                        <p class="tagline" style="margin-top:5px">CP MÁXIMO</p>
+                    </div>
+                </div>
+
+                <div class="go-details-grid">
+                    <div class="detail-item">
+                        <strong>Linhagem</strong>
+                        <span>${stages} Evoluções</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Custo Evolução</strong>
+                        <span>${candyCost}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Obtenção por Ovo</strong>
+                        <span>${eggInfo}</span>
+                    </div>
+                    <div class="detail-item">
+                        <strong>Distância Buddy</strong>
+                        <span>${p.buddyDistance || 0} km</span>
+                    </div>
+                </div>
+
+                <div class="stat-label">Status Máximos (Base)</div>
+                <div class="stats-row">
+                    <p><strong>ATK</strong> ${p.stats.attack}</p>
+                    <p><strong>DEF</strong> ${p.stats.defense}</p>
+                    <p><strong>STA</strong> ${p.stats.stamina}</p>
+                </div>
+
+                <div class="data-source">
+                    <small>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="margin-right:5px">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        DADOS REAIS EXTRAÍDOS DO POKÉMON GO
+                    </small>
+                </div>
+            </div>
+        </article>`;
+}
+
+// Lógica de Sugestões e Eventos
 const searchInput = document.getElementById('searchInput');
 const suggestionsBox = document.getElementById('customSuggestions');
 const themeToggle = document.getElementById('themeToggle');
@@ -85,15 +125,19 @@ searchInput.addEventListener('input', () => {
     suggestionsBox.innerHTML = '';
 
     if (value.length > 0) {
-        const filtered = allPokemonNames.filter(name => name.startsWith(value)).slice(0, 10);
+        // Agora filtra pela base do GO
+        const filtered = allPokemonGO
+            .filter(p => p.slug.startsWith(value))
+            .slice(0, 10);
+
         if (filtered.length > 0) {
             suggestionsBox.style.display = 'block';
-            filtered.forEach(name => {
+            filtered.forEach(p => {
                 const div = document.createElement('div');
                 div.classList.add('suggestion-item');
-                div.textContent = name;
+                div.textContent = p.name;
                 div.onclick = () => {
-                    searchInput.value = name;
+                    searchInput.value = p.slug;
                     suggestionsBox.style.display = 'none';
                     findElite();
                 };
