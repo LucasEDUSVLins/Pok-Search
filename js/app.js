@@ -13,8 +13,9 @@ const COLORS = {
 };
 
 async function findElite() {
-    const query = document.getElementById('searchInput').value.toLowerCase().trim();
+    const input = document.getElementById('searchInput');
     const grid = document.getElementById('grid');
+    const query = input.value.toLowerCase().trim();
     if (!query) return;
 
     grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">ESCANEANDO...</p>`;
@@ -57,4 +58,4 @@ async function findElite() {
     }
 }
 
-document.getElementById('searchInput').addEventListener('keypress', e => e.key === 'Enter' && findElite());
+document.getElementById('searchInput')?.addEventListener('keypress', e => e.key === 'Enter' && findElite());
