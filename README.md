@@ -1,39 +1,47 @@
-# 🔍 PokéSearch
+# 🍍 PokéSearch - Encontre sua Elite
 
-**PokéSearch** é um buscador de elite avançado para treinadores Pokémon. O projeto foca em identificar a variação mais poderosa (maior BST - Base Stat Total) de qualquer espécie pesquisada, comparando formas Megas, Gigantamax e regionais em tempo real.
+![GitHub repo size](https://img.shields.io/github/repo-size/lucasedusvlins/Pok-Meta?style=for-the-badge)
+![GitHub language count](https://img.shields.io/github/languages/count/lucasedusvlins/Pok-Meta?style=for-the-badge)
+![GitHub last commit](https://img.shields.io/github/last-commit/lucasedusvlins/Pok-Meta?style=for-the-badge)
 
-## ✨ Funcionalidades
+O **PokéSearch** é uma aplicação web moderna e responsiva projetada para treinadores que buscam a "Elite" de cada espécie. O sistema analisa as variantes de um Pokémon e exibe automaticamente a forma com o maior **Base Stat Total (BST)**.
 
--   **🏆 Elite Finder:** Algoritmo que analisa todas as variantes de um Pokémon e exibe automaticamente a versão com as melhores estatísticas.
--   **⌨️ Smart Search:** Barra de pesquisa inteligente com sugestões automáticas (Autocomplete) e botão de limpeza rápida.
--   **🌓 Dark Mode:** Suporte nativo a tema escuro com persistência de preferência via LocalStorage.
--   **📊 Visualização Dinâmica:** Gráficos de barras coloridos dinamicamente com base no tipo principal do Pokémon.
--   **📱 Responsividade:** Interface adaptável para uma experiência perfeita em dispositivos móveis e desktop.
+[**✨ Ver Demonstração Ao Vivo**](https://lucasedusvlins.github.io/Pok-Meta/)
+
+---
+
+## 🚀 Funcionalidades
+
+- **Busca Inteligente:** Sugestões em tempo real conforme você digita.
+- **Elite Finder:** Algoritmo que compara formas (Mega, Gigantamax, Alola, etc.) e entrega a mais forte.
+- **Visual Premium:** Design com Glassmorphism, bordas arredondadas e ícones dinâmicos.
+- **Animações Reativas:** Pinap Berry animada que reage às suas buscas.
+- **Modo Escuro (Dark Mode):** Alternância de tema com persistência via `localStorage`.
+- **Mobile First:** Totalmente otimizado para dispositivos móveis com scrollbars ocultos e interface limpa.
+
+---
 
 ## 🛠️ Tecnologias Utilizadas
 
--   **HTML5 & CSS3:** Estrutura semântica e estilização moderna com variáveis CSS.
--   **JavaScript (ES6+):** Lógica assíncrona para consumo da [PokéAPI](https://pokeapi.co/).
--   **Google Fonts:** Fonte *Inter* para máxima legibilidade.
+O projeto foi construído utilizando tecnologias web puras para máxima performance:
 
-## 🚀 Como Executar o Projeto
+* **HTML5 & CSS3:** Estrutura e estilização avançada com animações `@keyframes`.
+* **JavaScript (ES6+):** Lógica de consumo de API assíncrona (`Fetch API`).
+* **PokéAPI:** Fonte de dados em tempo real sobre o universo Pokémon.
+* **Google Fonts:** Tipografia 'Inter' para uma leitura moderna.
 
-1.  Clone este repositório:
-    ```bash
-    git clone [https://github.com/lucasedusvlins/Pok-Meta.git](https://github.com/lucasedusvlins/Pok-Meta.git)
-    ```
-2.  Acesse a pasta do projeto:
-    ```bash
-    cd Pok-Meta
-    ```
-3.  Abra o arquivo `index.html` no seu navegador.
+---
 
-## 📁 Estrutura de Arquivos
+## 🎨 Interface
 
-```text
-├── index.html          # Página principal
-├── css/
-│   └── style.css       # Estilização e temas (Light/Dark)
-├── js/
-│   └── app.js          # Lógica da API, Busca e UI
-└── README.md           # Documentação do projeto
+| Tema Claro | Tema Escuro |
+| :---: | :---: |
+| ![Light Mode](https://via.placeholder.com/300x200?text=Light+Mode+Preview) | ![Dark Mode](https://via.placeholder.com/300x200?text=Dark+Mode+Preview) |
+
+---
+
+## 📦 Como rodar o projeto localmente
+
+1. Clone o repositório:
+   ```bash
+   git clone [https://github.com/lucasedusvlins/Pok-Meta.git](https://github.com/lucasedusvlins/Pok-Meta.git)
