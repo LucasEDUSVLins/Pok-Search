@@ -4,24 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PokéMeta - Elite Finder</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-slate-50 min-h-screen">
+<body class="app-body">
 
-    <header class="py-10 text-center">
-        <h1 class="text-4xl font-black text-slate-800">POKÉ<span class="text-blue-600">META</span></h1>
-        <p class="text-slate-500 font-bold text-sm">Scanner de Versões Elite</p>
+    <header class="main-header">
+        <h1 class="brand">POKÉ<span class="brand-alt">META</span></h1>
+        <p class="tagline">Scanner de Versões Elite</p>
         
-        <div class="mt-8 max-w-md mx-auto px-4">
-            <input type="text" id="searchInput" placeholder="Ex: Charizard, Mewtwo..." 
-                   class="w-full p-4 rounded-2xl border-2 border-slate-200 focus:border-blue-500 outline-none shadow-lg transition-all">
-            <p class="mt-2 text-[10px] text-slate-400 font-bold uppercase">Pressione ENTER para escanear</p>
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="Ex: Charizard, Mewtwo..." class="search-field">
+            <p class="search-note">Pressione ENTER para escanear</p>
         </div>
     </header>
 
-    <main id="grid" class="max-w-6xl mx-auto px-4 pb-20">
-        </main>
+    <main id="grid" class="content-grid"></main>
 
     <script src="js/app.js"></script>
 </body>
