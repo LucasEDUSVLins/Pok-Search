@@ -51,22 +51,24 @@ body.dark-mode {
     color: white;
 }
 
+/* Ajuste do Wrapper para não sobrepor a seta do datalist */
 .input-wrapper {
     position: relative;
     display: flex;
     align-items: center;
+    width: 100%;
 }
 
+/* Posiciona o X à esquerda da seta padrão do navegador */
 .clear-btn {
     position: absolute;
-    right: 1.5rem;
+    right: 3rem; /* Aumentei de 1.5rem para 3rem para dar espaço à seta */
     background: none;
     border: none;
     font-size: 1.5rem;
     color: var(--text-muted);
     cursor: pointer;
-    display: none;
-    /* Escondido por padrão */
+    z-index: 10; /* Garante que fique clicável */
     line-height: 1;
 }
 
@@ -77,6 +79,17 @@ body.dark-mode {
 /* Exibe o botão apenas quando houver texto no input */
 .search-input:not(:placeholder-shown)+.clear-btn {
     display: block;
+}
+
+/* Espaçamento da frase "Pressione Enter" */
+.search-hint {
+    display: block;
+    margin-top: 1.5rem; /* Aumentado para dar mais "ar" entre a barra e o texto */
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .main-header {
@@ -107,17 +120,9 @@ body.dark-mode {
     margin-inline: auto;
 }
 
+/* Ajuste no padding do input para o texto não passar por baixo do X */
 .search-input {
-    width: 100%;
-    padding: 1.25rem;
-    border-radius: 1rem;
-    border: 2px solid #e2e8f0;
-    font-size: 1.1rem;
-    outline: none;
-    transition: 0.3s;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    background: var(--card-bg);
-    color: var(--text-main);
+    padding-right: 4.5rem !important; 
 }
 
 .search-input:focus {
