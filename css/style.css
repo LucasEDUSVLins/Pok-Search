@@ -22,7 +22,6 @@ body {
     transition: background 0.3s;
 }
 
-/* Ajustes finos para o Tema Escuro */
 body.dark-mode {
     --bg-body: #0f172a;
     --text-main: #f1f5f9;
@@ -31,70 +30,7 @@ body.dark-mode {
     --bar-bg: #334155;
 }
 
-/* Estilo do Botão */
-.theme-btn {
-    margin-top: 1rem;
-    padding: 0.6rem 1.2rem;
-    border-radius: 2rem;
-    border: 2px solid var(--primary);
-    background: transparent;
-    color: var(--primary);
-    font-weight: 700;
-    cursor: pointer;
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    transition: 0.2s;
-}
-
-.theme-btn:hover {
-    background: var(--primary);
-    color: white;
-}
-
-/* Ajuste do Wrapper para não sobrepor a seta do datalist */
-.input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-}
-
-/* Posiciona o X à esquerda da seta padrão do navegador */
-.clear-btn {
-    position: absolute;
-    right: 3rem;
-    /* Aumentei de 1.5rem para 3rem para dar espaço à seta */
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: var(--text-muted);
-    cursor: pointer;
-    z-index: 10;
-    /* Garante que fique clicável */
-    line-height: 1;
-}
-
-.clear-btn:hover {
-    color: var(--primary);
-}
-
-/* Exibe o botão apenas quando houver texto no input */
-.search-input:not(:placeholder-shown)+.clear-btn {
-    display: block;
-}
-
-/* Espaçamento da frase "Pressione Enter" */
-.search-hint {
-    display: block;
-    margin-top: 1.5rem;
-    /* Aumentado para dar mais "ar" entre a barra e o texto */
-    font-size: 0.7rem;
-    font-weight: 800;
-    color: #94a3b8;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
+/* Header e Logo */
 .main-header {
     padding: 4rem 1rem;
     text-align: center;
@@ -117,22 +53,92 @@ body.dark-mode {
     text-transform: uppercase;
 }
 
-.search-box {
-    margin-top: 2rem;
-    max-width: 450px;
-    margin-inline: auto;
+/* Botão Tema */
+.theme-btn {
+    margin-top: 1rem;
+    padding: 0.6rem 1.2rem;
+    border-radius: 2rem;
+    border: 2px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    transition: 0.2s;
 }
 
-/* Ajuste no padding do input para o texto não passar por baixo do X */
+.theme-btn:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* --- SEÇÃO DA BUSCA (CORRIGIDA) --- */
+.search-box {
+    margin: 2rem auto 0;
+    max-width: 500px;
+    /* Largura ideal */
+    width: 90%;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
 .search-input {
-    padding-right: 4.5rem !important;
+    width: 100%;
+    padding: 1.25rem 4.5rem 1.25rem 1.5rem;
+    /* Padding largo para acomodar o X */
+    border-radius: 1.2rem;
+    border: 2px solid #e2e8f0;
+    font-size: 1.1rem;
+    outline: none;
+    transition: 0.3s;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    background: var(--card-bg);
+    color: var(--text-main);
 }
 
 .search-input:focus {
     border-color: var(--primary);
     transform: translateY(-2px);
+    box-shadow: 0 15px 20px -5px rgba(37, 99, 235, 0.2);
 }
 
+.clear-btn {
+    position: absolute;
+    right: 3.2rem;
+    /* Posicionado antes da seta do datalist */
+    background: none;
+    border: none;
+    font-size: 1.6rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    z-index: 10;
+    line-height: 1;
+    display: none;
+    /* Só aparece via JS ou CSS se houver texto */
+}
+
+/* Mostra o X apenas quando o input não está vazio */
+.search-input:not(:placeholder-shown)+.clear-btn {
+    display: block;
+}
+
+.search-hint {
+    display: block;
+    margin-top: 1.5rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* --- CARDS E CONTEÚDO --- */
 .main-content {
     max-width: 900px;
     margin: 0 auto;
