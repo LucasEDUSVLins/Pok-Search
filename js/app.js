@@ -1,35 +1,37 @@
 /**
- * POKÉMETA - Versão 2.0 (Dados Reais e Lista Completa)
+ * POKÉMETA - Versão 2.1 (Correção de Fechamento e Dados Reais)
  */
 
 const CONFIG = {
-  // Aumentado para 1025 para pegar todos os Pokémon conhecidos
   API_URL: 'https://pokeapi.co/api/v2/pokemon?limit=1025',
   IMG_BASE: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/'
 };
 
+// Estado da Aplicação
 let pokemonList = [];
 let compareList = [];
 
+// Elementos da Interface
 const grid = document.getElementById('grid');
 const searchInput = document.getElementById('searchInput');
 const clearBtn = document.getElementById('clearSearch');
 const compareCount = document.getElementById('compareCount');
+const detailsModal = document.getElementById('detailsModal'); // Cache do modal de detalhes
 
+/**
+ * Inicializa a aplicação
+ */
 async function start() {
   try {
     const res = await fetch(CONFIG.API_URL);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
 
-    // MAPEAMENTO: O ID é extraído da URL para garantir precisão
     pokemonList = data.results.map((p) => {
       const id = p.url.split('/')[6];
       return {
         name: p.name,
-        id: parseInt(id),
-        // Removido o Random. Agora o render buscará dados reais se necessário
-        // ou exibiremos apenas o ID até o clique em detalhes.
+        id: parseInt(id)
       };
     });
 
@@ -38,10 +40,13 @@ async function start() {
 
   } catch (err) {
     console.error(err);
-    if (grid) grid.innerHTML = `<div class="col-span-full py-20 text-center text-red-500">Erro: ${err.message}</div>`;
+    if (grid) grid.innerHTML = `<div class="col-span-full py-20 text-center text-red-500">Erro ao carregar lista.</div>`;
   }
 }
 
+/**
+ * Renderiza os cards
+ */
 function render(list) {
   if (!grid) return;
   grid.innerHTML = '';
@@ -51,8 +56,7 @@ function render(list) {
     return;
   }
 
-  // Pegamos apenas os primeiros 100 para não travar o navegador no carregamento inicial, 
-  // mas a busca funcionará em TODOS os 1025.
+  // Mostra os primeiros 100 ou o resultado da busca
   const displayList = searchInput.value.length > 0 ? list : list.slice(0, 100);
 
   const htmlContent = displayList.map(p => {
@@ -73,22 +77,19 @@ function render(list) {
   if (compareCount) compareCount.innerText = `${compareList.length}/2 Selecionados`;
 }
 
+/**
+ * Detalhes (Abrir e Fechar)
+ */
 async function showDetails(id) {
-  const modal = document.getElementById('detailsModal');
   const content = document.getElementById('detailsContent');
-  modal.classList.remove('hidden');
-  content.innerHTML = `<div class="p-10 text-center animate-pulse">Carregando dados reais...</div>`;
+  if (!detailsModal || !content) return;
+
+  detailsModal.classList.remove('hidden');
+  content.innerHTML = `<div class="p-10 text-center animate-pulse text-gray-400 font-bold uppercase tracking-widest text-xs">Acessando Banco de Dados...</div>`;
 
   try {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
     const data = await res.json();
-
-    const stats = {
-      hp: data.stats[0].base_stat,
-      atk: data.stats[1].base_stat,
-      def: data.stats[2].base_stat,
-      speed: data.stats[5].base_stat
-    };
 
     const types = data.types.map(t => `<span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-black uppercase">${t.type.name}</span>`).join(' ');
 
@@ -102,20 +103,27 @@ async function showDetails(id) {
           <div class="flex flex-wrap gap-1 justify-end">${types}</div>
         </div>
         <div class="space-y-4">
-          ${renderStatBar('HP', stats.hp, 'bg-green-500')}
-          ${renderStatBar('ATAQUE', stats.atk, 'bg-red-500')}
-          ${renderStatBar('DEFESA', stats.def, 'bg-blue-500')}
-          ${renderStatBar('VELOCIDADE', stats.speed, 'bg-yellow-500')}
+          ${renderStatBar('HP', data.stats[0].base_stat, 'bg-green-500')}
+          ${renderStatBar('ATAQUE', data.stats[1].base_stat, 'bg-red-500')}
+          ${renderStatBar('DEFESA', data.stats[2].base_stat, 'bg-blue-500')}
+          ${renderStatBar('VELOCIDADE', data.stats[5].base_stat, 'bg-yellow-500')}
         </div>
       </div>
     `;
   } catch (err) {
-    content.innerHTML = `<div class="p-10 text-center text-red-500">Erro ao carregar dados oficiais.</div>`;
+    content.innerHTML = `<div class="p-10 text-center text-red-500 font-bold">Erro ao carregar dados oficiais.</div>`;
+  }
+}
+
+// ESTA É A FUNÇÃO QUE FECHA O MODAL
+function closeDetails() {
+  if (detailsModal) {
+    detailsModal.classList.add('hidden');
   }
 }
 
 function renderStatBar(label, value, color) {
-  const width = Math.min((value / 150) * 100, 100); // Baseado em um máximo de 150 para a barra
+  const width = Math.min((value / 150) * 100, 100);
   return `
     <div>
       <div class="flex justify-between text-[10px] font-black text-gray-400 mb-1">
@@ -129,7 +137,9 @@ function renderStatBar(label, value, color) {
   `;
 }
 
-// Funções de Comparação e Busca permanecem iguais, apenas atualizadas para os novos dados
+/**
+ * Comparação
+ */
 function toggleCompare(id) {
   const poke = pokemonList.find(p => p.id === id);
   const index = compareList.findIndex(c => c.id === id);
@@ -142,36 +152,49 @@ function toggleCompare(id) {
 async function showCompareModal() {
   const modal = document.getElementById('compareModal');
   const content = document.getElementById('compareContent');
+  if (!modal || !content) return;
+
   modal.classList.remove('hidden');
-  content.innerHTML = `<div class="col-span-full p-10 text-center">Obtendo estatísticas comparativas...</div>`;
+  content.innerHTML = `<div class="col-span-full p-10 text-center text-gray-400 font-bold">Sincronizando estatísticas...</div>`;
 
-  // Para comparar dados REAIS, precisamos buscar os dados dos dois selecionados
-  const p1Data = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${compareList[0].id}`)).json();
-  const p2Data = await (await fetch(`https://pokeapi.co/api/v2/pokemon/${compareList[1].id}`)).json();
+  try {
+    const [p1, p2] = await Promise.all([
+      fetch(`https://pokeapi.co/api/v2/pokemon/${compareList[0].id}`).then(r => r.json()),
+      fetch(`https://pokeapi.co/api/v2/pokemon/${compareList[1].id}`).then(r => r.json())
+    ]);
 
-  content.innerHTML = `
-    <div class="p-4">
-      <img src="${CONFIG.IMG_BASE}${compareList[0].id}.png" class="w-32 h-32 mx-auto">
-      <h2 class="text-xl font-black capitalize">${p1Data.name}</h2>
-      <p class="text-red-500 font-bold">ATK: ${p1Data.stats[1].base_stat}</p>
-      <p class="text-blue-500 font-bold">DEF: ${p1Data.stats[2].base_stat}</p>
-    </div>
-    <div class="text-2xl font-black text-gray-200">VS</div>
-    <div class="p-4">
-      <img src="${CONFIG.IMG_BASE}${compareList[1].id}.png" class="w-32 h-32 mx-auto">
-      <h2 class="text-xl font-black capitalize">${p2Data.name}</h2>
-      <p class="text-red-500 font-bold">ATK: ${p2Data.stats[1].base_stat}</p>
-      <p class="text-blue-500 font-bold">DEF: ${p2Data.stats[2].base_stat}</p>
-    </div>
-  `;
+    content.innerHTML = `
+      <div class="p-4">
+        <img src="${CONFIG.IMG_BASE}${p1.id}.png" class="w-32 h-32 mx-auto">
+        <h2 class="text-xl font-black capitalize text-gray-800">${p1.name}</h2>
+        <p class="text-red-500 font-bold text-xs">ATK: ${p1.stats[1].base_stat}</p>
+        <p class="text-blue-500 font-bold text-xs">DEF: ${p1.stats[2].base_stat}</p>
+      </div>
+      <div class="flex flex-col items-center">
+        <div class="bg-blue-600 text-white font-black rounded-full w-10 h-10 flex items-center justify-center shadow-lg">VS</div>
+      </div>
+      <div class="p-4">
+        <img src="${CONFIG.IMG_BASE}${p2.id}.png" class="w-32 h-32 mx-auto">
+        <h2 class="text-xl font-black capitalize text-gray-800">${p2.name}</h2>
+        <p class="text-red-500 font-bold text-xs">ATK: ${p2.stats[1].base_stat}</p>
+        <p class="text-blue-500 font-bold text-xs">DEF: ${p2.stats[2].base_stat}</p>
+      </div>
+    `;
+  } catch (err) {
+    content.innerHTML = `<p class="col-span-full text-red-500">Erro na comparação.</p>`;
+  }
 }
 
 function closeCompare() {
   compareList = [];
-  document.getElementById('compareModal').classList.add('hidden');
+  const modal = document.getElementById('compareModal');
+  if (modal) modal.classList.add('hidden');
   render(pokemonList);
 }
 
+/**
+ * Busca
+ */
 searchInput?.addEventListener('input', (e) => {
   const term = e.target.value.toLowerCase();
   term.length > 0 ? clearBtn.classList.remove('hidden') : clearBtn.classList.add('hidden');
