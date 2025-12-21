@@ -58,7 +58,6 @@ async function findElite() {
     }
 }
 
-// Lógica do Dark Mode
 const themeToggle = document.getElementById('themeToggle');
 
 if (themeToggle) {
@@ -73,22 +72,17 @@ if (localStorage.getItem('dark-theme') === 'true') {
     document.body.classList.add('dark-mode');
 }
 
-// 1. Lógica do botão Limpar "X"
 const clearBtn = document.getElementById('clearSearch');
 const searchInput = document.getElementById('searchInput');
 
 clearBtn.addEventListener('click', () => {
     searchInput.value = '';
     searchInput.focus();
-    // Opcional: Limpa o grid se quiser resetar a tela ao limpar a busca
-    // document.getElementById('grid').innerHTML = ''; 
 });
 
-// 2. Lógica de Sugestões (Auto-complete)
 async function loadSuggestions() {
     const datalist = document.getElementById('pokeSuggestions');
     try {
-        // Busca os primeiros 1000 pokémons para sugestão (cache leve)
         const res = await fetch('https://pokeapi.co/api/v2/pokemon?limit=1000');
         const data = await res.json();
 
@@ -100,7 +94,6 @@ async function loadSuggestions() {
     }
 }
 
-// Inicializa as sugestões ao carregar a página
 loadSuggestions();
 
 document.getElementById('searchInput')?.addEventListener('keypress', e => e.key === 'Enter' && findElite());

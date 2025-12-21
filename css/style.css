@@ -2,7 +2,7 @@
 
 :root {
     --bg-body: #f8fafc;
-    --primary: #ef4444;
+    --primary: #2563eb;
     --text-main: #1e293b;
     --text-muted: #64748b;
     --card-bg: #ffffff;
@@ -30,7 +30,6 @@ body.dark-mode {
     --bar-bg: #334155;
 }
 
-/* Header e Logo */
 .main-header {
     padding: 4rem 1rem;
     text-align: center;
@@ -53,7 +52,6 @@ body.dark-mode {
     text-transform: uppercase;
 }
 
-/* Botão Tema */
 .theme-btn {
     margin-top: 1rem;
     padding: 0.6rem 1.2rem;
@@ -76,7 +74,6 @@ body.dark-mode {
 .search-box {
     margin: 2rem auto 0;
     max-width: 500px;
-    /* Mantém a largura elegante */
     width: 95%;
     text-align: center;
 }
@@ -92,7 +89,6 @@ body.dark-mode {
     width: 100%;
     padding: 1.25rem;
     padding-right: 4.5rem;
-    /* Espaço para o X e a seta do datalist */
     border-radius: 1.2rem;
     border: 2px solid #e2e8f0;
     font-size: 1.1rem;
@@ -112,7 +108,6 @@ body.dark-mode {
 .clear-btn {
     position: absolute;
     right: 3.2rem;
-    /* Posicionado antes da seta seletora */
     background: none;
     border: none;
     font-size: 1.6rem;
@@ -121,7 +116,6 @@ body.dark-mode {
     z-index: 10;
     line-height: 1;
     display: none;
-    /* Só aparece quando há texto */
 }
 
 .search-input:not(:placeholder-shown)+.clear-btn {
@@ -131,7 +125,6 @@ body.dark-mode {
 .search-hint {
     display: block;
     margin-top: 1.8rem;
-    /* Aumentado para não sufocar a barra */
     font-size: 0.75rem;
     font-weight: 800;
     color: var(--text-muted);
@@ -139,7 +132,6 @@ body.dark-mode {
     letter-spacing: 1px;
 }
 
-/* --- CARDS E CONTEÚDO --- */
 .main-content {
     max-width: 900px;
     margin: 0 auto;
