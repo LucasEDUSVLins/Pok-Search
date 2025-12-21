@@ -16,10 +16,7 @@ const box = document.getElementById('customSuggestions');
 const themeToggle = document.getElementById('themeToggle');
 const clearBtn = document.getElementById('clearSearch');
 
-// Inicialização do Tema
-if (localStorage.getItem('dark-theme') === 'true') {
-    document.body.classList.add('dark-mode');
-}
+if (localStorage.getItem('dark-theme') === 'true') document.body.classList.add('dark-mode');
 
 async function initSearch() {
     try {
@@ -30,47 +27,44 @@ async function initSearch() {
 }
 
 async function findElite() {
-    const logoIcon = document.querySelector('.logo-pinap');
-    if (logoIcon) {
-        logoIcon.classList.remove('animate-jump');
-        void logoIcon.offsetWidth;
-        logoIcon.classList.add('animate-jump');
-    }
-
     const grid = document.getElementById('grid');
     const query = searchInput.value.toLowerCase().trim();
     if (!query) return;
 
-    grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">ESCANEANDO POKÉAPI...</p>`;
+    grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">ANALISANDO TIPO E FRAQUEZAS...</p>`;
 
     try {
         const p = await fetch(`${POKE_API}pokemon/${query}`).then(r => r.json());
         const s = await fetch(p.species.url).then(r => r.json());
         const evoRes = await fetch(s.evolution_chain.url);
         const evoData = await evoRes.json();
-        renderFullCard(p, s, evoData);
+
+        // Busca dados de fraquezas para cada tipo do Pokémon
+        const damageData = await Promise.all(p.types.map(t => fetch(t.type.url).then(r => r.json())));
+
+        renderFullCard(p, s, evoData, damageData);
     } catch (err) {
-        grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">NÃO ENCONTRADO NA POKÉAPI</p>`;
+        grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">ERRO AO BUSCAR DADOS ELITE</p>`;
     }
 }
 
-function renderFullCard(p, s, evo) {
+function renderFullCard(p, s, evo, damageData) {
     const grid = document.getElementById('grid');
-    const type = p.types[0].type.name;
-    const color = COLORS[type] || ['#94a3b8', '#475569'];
+    const mainType = p.types[0].type.name;
+    const color = COLORS[mainType] || ['#94a3b8', '#475569'];
     const bst = p.stats.reduce((acc, stat) => acc + stat.base_stat, 0);
 
-    let evoCount = 0;
-    let curr = evo.chain;
-    while (curr && curr.evolves_to.length > 0) {
-        evoCount++;
-        curr = curr.evolves_to[0];
-    }
+    // Lógica de Fraquezas (Dano x2)
+    const weaknesses = new Set();
+    damageData.forEach(d => {
+        d.damage_relations.double_damage_from.forEach(type => weaknesses.add(type.name));
+    });
 
-    const nextEvo = evo.chain.evolves_to[0]?.evolution_details[0];
-    const requirement = nextEvo ?
-        (nextEvo.min_level ? `Level ${nextEvo.min_level}` : nextEvo.item ? nextEvo.item.name : nextEvo.trigger.name)
-        : "Final ou Único";
+    const weaknessesHtml = Array.from(weaknesses).map(w =>
+        `<span class="type-badge" style="background:${COLORS[w]?.[0] || '#ccc'}">${w.toUpperCase()}</span>`
+    ).join('');
+
+    const typesHtml = p.types.map(t => `<span style="color: ${COLORS[t.type.name][0]}">${t.type.name.toUpperCase()}</span>`).join(' / ');
 
     grid.innerHTML = `
         <article class="pokemon-card" style="border-color: ${color[0]}">
@@ -79,35 +73,39 @@ function renderFullCard(p, s, evo) {
             </div>
             <div class="card-info">
                 <div class="title-row">
-                    <div><p class="tagline">ID #${p.id}</p><h2 class="name">${p.name}</h2></div>
+                    <div>
+                        <p class="tagline">ID #${p.id} • ${typesHtml}</p>
+                        <h2 class="name">${p.name}</h2>
+                    </div>
                     <div style="text-align:right">
                         <span class="bst-num" style="color:${color[1]}">${bst}</span>
                         <p class="tagline">BST TOTAL</p>
                     </div>
                 </div>
+
                 <div class="go-details-grid">
-                    <div class="detail-item"><strong>Evoluções</strong><span>${evoCount} estágios</span></div>
-                    <div class="detail-item"><strong>Requisito</strong><span>${requirement}</span></div>
+                    <div class="detail-item"><strong>Fraquezas</strong><div>${weaknessesHtml}</div></div>
                     <div class="detail-item"><strong>Grupo Ovo</strong><span>${s.egg_groups[0]?.name || 'N/A'}</span></div>
+                    <div class="detail-item"><strong>Habilidades</strong><span style="text-transform:capitalize">${p.abilities[0].ability.name}</span></div>
                     <div class="detail-item"><strong>Felicidade</strong><span>${s.base_happiness}</span></div>
                 </div>
+
                 <div class="stat-label">Status Base</div>
                 <div class="stats-row">
+                    <p><strong>HP</strong> ${p.stats[0].base_stat}</p>
                     <p><strong>ATK</strong> ${p.stats[1].base_stat}</p>
                     <p><strong>DEF</strong> ${p.stats[2].base_stat}</p>
-                    <p><strong>HP</strong> ${p.stats[0].base_stat}</p>
+                    <p><strong>SPD</strong> ${p.stats[5].base_stat}</p>
                 </div>
-                <div class="data-source"><small>📚 FONTE: POKÉAPI OFICIAL</small></div>
             </div>
         </article>`;
 }
 
-// Eventos de Interface
+// Eventos de Interface (Mantidos conforme sua estrutura funcional)
 searchInput?.addEventListener('input', () => {
     const val = searchInput.value.toLowerCase().trim();
     box.innerHTML = '';
     clearBtn.style.display = val.length > 0 ? 'block' : 'none';
-
     if (val.length > 0) {
         const matches = allPokemonNames.filter(n => n.includes(val)).slice(0, 6);
         if (matches.length > 0) {
@@ -116,11 +114,7 @@ searchInput?.addEventListener('input', () => {
                 const div = document.createElement('div');
                 div.className = 'suggestion-item';
                 div.textContent = name;
-                div.onclick = () => {
-                    searchInput.value = name;
-                    box.style.display = 'none';
-                    findElite();
-                };
+                div.onclick = () => { searchInput.value = name; box.style.display = 'none'; findElite(); };
                 box.appendChild(div);
             });
         } else box.style.display = 'none';
