@@ -300,12 +300,10 @@ body.dark-mode .suggestion-item:hover {
         transform: translateY(-20px) scale(1.1);
     }
 
-    /* Ele sobe e aumenta um pouco */
     50% {
         transform: translateY(0) scale(0.9);
     }
 
-    /* Impacto no chão */
 }
 
 .animate-jump {
