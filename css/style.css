@@ -41,6 +41,33 @@ body.dark-mode {
     color: white;
 }
 
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.clear-btn {
+    position: absolute;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: none; /* Escondido por padrão */
+    line-height: 1;
+}
+
+.clear-btn:hover {
+    color: var(--primary);
+}
+
+/* Exibe o botão apenas quando houver texto no input */
+.search-input:not(:placeholder-shown) + .clear-btn {
+    display: block;
+}
+
 .main-header { padding: 4rem 1rem; text-align: center; }
 .logo { font-size: 3rem; font-weight: 900; letter-spacing: -2px; }
 .logo-alt { color: var(--primary); }
