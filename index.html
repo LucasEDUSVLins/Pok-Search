@@ -9,6 +9,14 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 
+<div id="detailsModal" class="hidden fixed inset-0 z-[110] bg-black/60 backdrop-blur-md flex items-center justify-center p-4">
+  <div class="bg-white w-full max-w-md rounded-3xl overflow-hidden relative shadow-2xl">
+    <button onclick="closeDetails()" class="absolute top-4 right-4 z-10 bg-white/80 rounded-full p-2 hover:bg-red-50 transition-colors">✕</button>
+    <div id="detailsContent">
+      </div>
+  </div>
+</div>
+
 <body class="bg-gray-100 text-gray-900 font-sans">
 
   <div id="compareModal" class="hidden fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
