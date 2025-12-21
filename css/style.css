@@ -1,37 +1,48 @@
-/* Efeito Glassmorphism e Transições */
-.glass-card {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Configurações de Layout e Fontes */
+body {
+    background-color: #f8fafc;
+    font-family: 'Inter', sans-serif;
 }
 
-.dark .glass-card {
-    background: rgba(15, 23, 42, 0.6);
+/* Efeito de Pontos no Fundo do Modal (Pattern) */
+.pattern-dots {
+    background-image: radial-gradient(#ffffff 1px, transparent 1px);
+    background-size: 20px 20px;
 }
 
-.glass-card:hover {
-    transform: translateY(-8px);
-    border-color: #3b82f6;
-    box-shadow: 0 20px 25px -5px rgba(59, 130, 246, 0.2);
+/* Animações de Entrada */
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }
 
-.selected-card {
-    border: 2px solid #3b82f6 !important;
-    background: rgba(59, 130, 246, 0.1) !important;
+.animate-slide-up {
+    animation: slideUp 0.4s ease-out forwards;
 }
 
+/* Customização de Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Estilização para as Barras de Status Dinâmicas */
 .stat-bar-container {
-    height: 6px;
-    background: #e2e8f0;
-    border-radius: 10px;
-    overflow: hidden;
+    @apply w-full bg-gray-100 rounded-full h-2 shadow-inner overflow-hidden;
 }
 
-.dark .stat-bar-container { background: #1e293b; }
-
-.stat-fill {
-    height: 100%;
-    border-radius: 10px;
-    transition: width 1s ease-in-out;
+.stat-bar-fill {
+    @apply h-full transition-all duration-1000 ease-out;
 }
