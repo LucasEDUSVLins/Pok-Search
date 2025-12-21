@@ -1,5 +1,5 @@
 /**
- * POKÉMETA - Lógica Principal
+ * POKÉMETA - Lógica Principal (Versão Blindada)
  * Projetado para: PokéAPI (Estável)
  */
 
@@ -19,54 +19,62 @@ const clearBtn = document.getElementById('clearSearch');
 const compareCount = document.getElementById('compareCount');
 
 /**
- * Inicializa a aplicação buscando dados da API
+ * Inicializa a aplicação com sistema de segurança contra falhas
  */
 async function start() {
-  const loadingMsg = document.getElementById('loadingMsg');
-
   try {
-    const res = await fetch(CONFIG.API_URL);
-    if (!res.ok) throw new Error('Erro na conexão com a API');
+    // Timeout de 8 segundos para evitar carregamento infinito
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+    const res = await fetch(CONFIG.API_URL, { signal: controller.signal });
+    clearTimeout(timeoutId);
+
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     
     const data = await res.json();
     
-    // Processamento dos dados
-    pokemonList = data.results.map((p, index) => {
-      const id = index + 1;
-      return {
-        name: p.name,
-        id: id,
-        attack: Math.floor(Math.random() * 101) + 50,
-        defense: Math.floor(Math.random() * 101) + 40 
-      };
-    });
+    if (!data.results) throw new Error('Formato de dados inválido');
 
-    // Remove a mensagem de carregamento antes de renderizar
-    if (loadingMsg) {
-      loadingMsg.remove();
-    }
+    // Mapeamento dos Pokémon
+    pokemonList = data.results.map((p, index) => ({
+      name: p.name,
+      id: index + 1,
+      attack: Math.floor(Math.random() * 101) + 50,
+      defense: Math.floor(Math.random() * 101) + 40 
+    }));
 
-    // Renderiza a lista inicial no HOME
+    // Força a limpeza do grid antes de mostrar os dados
+    if (grid) grid.innerHTML = '';
     render(pokemonList);
 
   } catch (err) {
-    console.error(err);
+    console.error("Erro no Start:", err);
     if (grid) {
-      grid.innerHTML = `<p class="col-span-full text-red-500 py-10">Falha ao carregar o Meta. Tente novamente.</p>`;
+      grid.innerHTML = `
+        <div class="col-span-full py-20 text-center">
+          <p class="text-red-500 font-bold mb-4">Falha ao carregar o Meta.</p>
+          <button onclick="location.reload()" class="bg-blue-600 text-white px-6 py-2 rounded-full text-sm hover:bg-blue-700 transition-all">
+            Tentar Novamente
+          </button>
+          <p class="text-[10px] text-gray-400 mt-4 italic">Erro: ${err.message}</p>
+        </div>
+      `;
     }
   }
 }
 
 /**
- * Renderiza os cards no grid principal
+ * Renderiza os cards no grid
  */
 function render(list) {
   if (!grid) return;
 
+  // Garante que o grid seja limpo antes de renderizar a nova lista
   grid.innerHTML = '';
 
   if (list.length === 0) {
-    grid.innerHTML = `<p class="col-span-full opacity-50 py-10 text-center text-gray-400">Nenhum Pokémon encontrado.</p>`;
+    grid.innerHTML = `<p class="col-span-full opacity-50 py-10 text-center text-gray-400 font-medium">Nenhum Pokémon encontrado.</p>`;
     return;
   }
 
@@ -75,7 +83,7 @@ function render(list) {
     return `
       <div onclick="toggleCompare(${p.id})" 
            class="bg-white p-6 rounded-2xl shadow-sm border transition-all duration-300 cursor-pointer hover:shadow-lg hover:-translate-y-1 ${isSelected ? 'border-blue-500 ring-4 ring-blue-50' : 'border-gray-100'}">
-        <img src="${CONFIG.IMG_BASE}${p.id}.png" class="w-24 h-24 mx-auto mb-4" loading="lazy">
+        <img src="${CONFIG.IMG_BASE}${p.id}.png" class="w-24 h-24 mx-auto mb-4" loading="lazy" onerror="this.src='https://via.placeholder.com/150?text=?'">
         <h3 class="font-bold capitalize text-gray-800 tracking-tight">${p.name}</h3>
         <div class="mt-4 pt-3 border-t border-gray-50 flex justify-between text-[10px] font-black text-gray-400 uppercase tracking-widest">
           <span>ATK: ${p.attack}</span>
@@ -85,12 +93,14 @@ function render(list) {
     `;
   }).join('');
 
-  grid.innerHTML = htmlContent;
-  compareCount.innerText = `${compareList.length}/2 Selecionados`;
+  grid.insertAdjacentHTML('beforeend', htmlContent);
+  if (compareCount) {
+    compareCount.innerText = `${compareList.length}/2 Selecionados`;
+  }
 }
 
 /**
- * Lógica de Seleção para Comparação
+ * Lógica de Seleção
  */
 function toggleCompare(id) {
   const poke = pokemonList.find(p => p.id === id);
@@ -103,19 +113,18 @@ function toggleCompare(id) {
   }
 
   render(pokemonList);
-
-  if (compareList.length === 2) {
-    showCompareModal();
-  }
+  if (compareList.length === 2) showCompareModal();
 }
 
 /**
- * Interface do Modal de Comparação
+ * Interface do Modal
  */
 function showCompareModal() {
   const modal = document.getElementById('compareModal');
   const content = document.getElementById('compareContent');
   
+  if (!modal || !content) return;
+
   modal.classList.remove('hidden');
   content.innerHTML = `
     <div class="p-4 group">
@@ -143,27 +152,24 @@ function closeCompare() {
 }
 
 /**
- * Gerenciamento da Barra de Pesquisa e Botão Limpar
+ * Busca e Limpeza
  */
-searchInput.addEventListener('input', (e) => {
-  const term = e.target.value.toLowerCase();
-  
-  if (term.length > 0) {
-    clearBtn.classList.remove('hidden');
-  } else {
+if (searchInput) {
+  searchInput.addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    term.length > 0 ? clearBtn.classList.remove('hidden') : clearBtn.classList.add('hidden');
+    render(pokemonList.filter(p => p.name.includes(term)));
+  });
+}
+
+if (clearBtn) {
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
     clearBtn.classList.add('hidden');
-  }
-  
-  const filtered = pokemonList.filter(p => p.name.includes(term));
-  render(filtered);
-});
+    render(pokemonList);
+    searchInput.focus();
+  });
+}
 
-clearBtn.addEventListener('click', () => {
-  searchInput.value = '';
-  clearBtn.classList.add('hidden');
-  render(pokemonList);
-  searchInput.focus();
-});
-
-// Execução Inicial
+// Inicialização
 start();
