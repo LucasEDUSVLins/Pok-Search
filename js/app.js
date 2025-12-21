@@ -1,5 +1,5 @@
 /**
- * POKÉMETA - Versão Final (Cores HEX + Tradução de Tipos)
+ * POKÉMETA - Versão Estabilizada 3.0
  */
 
 const CONFIG = {
@@ -16,24 +16,15 @@ const TRANSLATIONS = {
 };
 
 const TYPE_COLORS = {
-  fire:     ['#FB923C', '#DC2626'],
-  water:    ['#60A5FA', '#2563EB'],
-  grass:    ['#4ADE80', '#16A34A'],
-  electric: ['#FACC15', '#CA8A04'],
-  psychic:  ['#F472B6', '#9333EA'],
-  ice:      ['#22D3EE', '#3B82F6'],
-  dragon:   ['#818CF8', '#4F46E5'],
-  dark:     ['#4B5563', '#111827'],
-  fairy:    ['#F9A8D4', '#E11D48'],
-  normal:   ['#9CA3AF', '#6B7280'],
-  fighting: ['#FB923C', '#991B1B'],
-  flying:   ['#7DD3FC', '#3B82F6'],
-  poison:   ['#C084FC', '#7E22CE'],
-  ground:   ['#D97706', '#92400E'],
-  rock:     ['#78716C', '#44403C'],
-  bug:      ['#A3E635', '#4D7C0F'],
-  ghost:    ['#818CF8', '#4C1D95'],
-  steel:    ['#94A3B8', '#475569']
+  fire: ['#FB923C', '#DC2626'], water: ['#60A5FA', '#2563EB'],
+  grass: ['#4ADE80', '#16A34A'], electric: ['#FACC15', '#CA8A04'],
+  psychic: ['#F472B6', '#9333EA'], ice: ['#22D3EE', '#3B82F6'],
+  dragon: ['#818CF8', '#4F46E5'], dark: ['#4B5563', '#111827'],
+  fairy: ['#F9A8D4', '#E11D48'], normal: ['#9CA3AF', '#6B7280'],
+  fighting: ['#FB923C', '#991B1B'], flying: ['#7DD3FC', '#3B82F6'],
+  poison: ['#C084FC', '#7E22CE'], ground: ['#D97706', '#92400E'],
+  rock: ['#78716C', '#44403C'], bug: ['#A3E635', '#4D7C0F'],
+  ghost: ['#818CF8', '#4C1D95'], steel: ['#94A3B8', '#475569']
 };
 
 let pokemonList = [];
@@ -45,24 +36,15 @@ const clearBtn = document.getElementById('clearSearch');
 
 async function start() {
   try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 8000);
-    const res = await fetch(CONFIG.API_URL, { signal: controller.signal });
-    clearTimeout(timeoutId);
-
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const res = await fetch(CONFIG.API_URL);
     const data = await res.json();
-
     pokemonList = data.results.map((p) => ({
       name: p.name,
       id: parseInt(p.url.split('/')[6])
     }));
-
-    if (grid) grid.innerHTML = '';
     render(pokemonList);
   } catch (err) {
-    console.error("Erro:", err);
-    if (grid) grid.innerHTML = `<div class="col-span-full py-20 text-center"><p class="text-red-500 font-bold">Erro de conexão.</p><button onclick="location.reload()" class="mt-4 bg-blue-600 text-white px-4 py-2 rounded-full">Recarregar</button></div>`;
+    console.error(err);
   }
 }
 
@@ -98,28 +80,28 @@ async function showDetails(id) {
     const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
     const data = await res.json();
     
+    // COR E ESTILO
     const mainType = data.types[0].type.name;
     const colors = TYPE_COLORS[mainType] || ['#9CA3AF', '#4B5563'];
-    const gradientStyle = `background: linear-gradient(to bottom, ${colors[0]}, ${colors[1]});`;
+    const gradient = `background: linear-gradient(180deg, ${colors[0]} 0%, ${colors[1]} 100%);`;
 
-    // Lógica de Tradução e Múltiplos Tipos
+    // TIPOS TRADUZIDOS
     const typesHTML = data.types.map(t => {
-      const nomeTraduzido = TRANSLATIONS[t.type.name] || t.type.name;
-      return `<span class="px-3 py-1 bg-white/20 text-white backdrop-blur-sm rounded-full text-[10px] font-black uppercase tracking-wider shadow-sm border border-white/30">${nomeTraduzido}</span>`;
+      const traduzido = TRANSLATIONS[t.type.name] || t.type.name;
+      return `<span class="px-3 py-1 bg-white/20 text-white backdrop-blur-sm rounded-full text-[10px] font-black uppercase border border-white/30 shadow-sm">${traduzido}</span>`;
     }).join(' ');
 
     content.innerHTML = `
-      <div class="p-8 text-center relative overflow-hidden transition-colors duration-500" style="${gradientStyle}">
-        <div class="absolute top-0 left-0 w-full h-full bg-white/10 opacity-30 pattern-dots"></div>
-        <img src="${CONFIG.IMG_BASE}${id}.png" class="w-44 h-44 mx-auto drop-shadow-2xl relative z-10 hover:scale-110 transition-transform duration-500">
+      <div class="p-8 text-center relative" style="${gradient}">
+        <img src="${CONFIG.IMG_BASE}${id}.png" class="w-44 h-44 mx-auto drop-shadow-2xl relative z-10">
       </div>
       <div class="p-8 bg-white">
         <div class="flex justify-between items-center mb-6">
           <div class="text-left">
-            <h2 class="text-3xl font-black capitalize text-gray-800 leading-none">${data.name}</h2>
+            <h2 class="text-3xl font-black capitalize text-gray-800">${data.name}</h2>
             <span class="text-xs font-bold text-gray-400">#${String(id).padStart(3, '0')}</span>
           </div>
-          <div class="flex flex-wrap gap-1 justify-end">${typesHTML}</div>
+          <div class="flex gap-1">${typesHTML}</div>
         </div>
         <div class="space-y-4 text-left">
           ${renderStatBar('HP', data.stats[0].base_stat, 'bg-green-500')}
@@ -130,7 +112,7 @@ async function showDetails(id) {
       </div>
     `;
   } catch (err) {
-    content.innerHTML = `<div class="p-10 text-center text-red-500">Erro ao carregar detalhes.</div>`;
+    content.innerHTML = `<div class="p-10 text-center text-red-500 font-bold">ERRO AO CARREGAR</div>`;
   }
 }
 
@@ -142,11 +124,10 @@ function renderStatBar(label, value, color) {
   const width = Math.min((value / 160) * 100, 100);
   return `
     <div>
-      <div class="flex justify-between text-[10px] font-black text-gray-400 mb-1 uppercase tracking-wider">
-        <span>${label}</span>
-        <span>${value}</span>
+      <div class="flex justify-between text-[10px] font-black text-gray-400 mb-1 uppercase">
+        <span>${label}</span><span>${value}</span>
       </div>
-      <div class="w-full bg-gray-100 rounded-full h-2 shadow-inner">
+      <div class="w-full bg-gray-100 rounded-full h-2">
         <div class="${color} h-2 rounded-full transition-all duration-1000" style="width: ${width}%"></div>
       </div>
     </div>
@@ -166,23 +147,14 @@ async function showCompareModal() {
   const modal = document.getElementById('compareModal');
   const content = document.getElementById('compareContent');
   modal.classList.remove('hidden');
-  content.innerHTML = `<div class="col-span-full p-10 text-center animate-pulse text-xs text-gray-400 font-bold">COMPARANDO...</div>`;
   const [p1, p2] = await Promise.all([
     fetch(`https://pokeapi.co/api/v2/pokemon/${compareList[0].id}`).then(r => r.json()),
     fetch(`https://pokeapi.co/api/v2/pokemon/${compareList[1].id}`).then(r => r.json())
   ]);
   content.innerHTML = `
-    <div class="p-4">
-      <img src="${CONFIG.IMG_BASE}${p1.id}.png" class="w-32 h-32 mx-auto drop-shadow-lg">
-      <h2 class="text-xl font-black capitalize text-gray-800 mt-2">${p1.name}</h2>
-      <div class="mt-3 flex justify-center gap-4 text-xs font-bold"><span class="text-red-500">ATK: ${p1.stats[1].base_stat}</span><span class="text-blue-500">DEF: ${p1.stats[2].base_stat}</span></div>
-    </div>
-    <div class="flex flex-col items-center justify-center"><div class="bg-gradient-to-br from-blue-600 to-blue-800 text-white font-black rounded-full w-14 h-14 flex items-center justify-center shadow-xl border-4 border-white text-lg">VS</div></div>
-    <div class="p-4">
-      <img src="${CONFIG.IMG_BASE}${p2.id}.png" class="w-32 h-32 mx-auto drop-shadow-lg">
-      <h2 class="text-xl font-black capitalize text-gray-800 mt-2">${p2.name}</h2>
-      <div class="mt-3 flex justify-center gap-4 text-xs font-bold"><span class="text-red-500">ATK: ${p2.stats[1].base_stat}</span><span class="text-blue-500">DEF: ${p2.stats[2].base_stat}</span></div>
-    </div>
+    <div class="p-4"><img src="${CONFIG.IMG_BASE}${p1.id}.png" class="w-32 h-32 mx-auto"><h2 class="text-xl font-black capitalize">${p1.name}</h2></div>
+    <div class="flex flex-col items-center"><div class="bg-blue-600 text-white font-black rounded-full w-12 h-12 flex items-center justify-center">VS</div></div>
+    <div class="p-4"><img src="${CONFIG.IMG_BASE}${p2.id}.png" class="w-32 h-32 mx-auto"><h2 class="text-xl font-black capitalize">${p2.name}</h2></div>
   `;
 }
 
@@ -194,15 +166,7 @@ function closeCompare() {
 
 searchInput?.addEventListener('input', (e) => {
   const term = e.target.value.toLowerCase();
-  term.length > 0 ? clearBtn.classList.remove('hidden') : clearBtn.classList.add('hidden');
   render(pokemonList.filter(p => p.name.includes(term)));
-});
-
-clearBtn?.addEventListener('click', () => {
-  searchInput.value = '';
-  clearBtn.classList.add('hidden');
-  render(pokemonList);
-  searchInput.focus();
 });
 
 start();
