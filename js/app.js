@@ -22,6 +22,8 @@ const compareCount = document.getElementById('compareCount');
  * Inicializa a aplicação buscando dados da API
  */
 async function start() {
+  const loadingMsg = document.getElementById('loadingMsg');
+
   try {
     const res = await fetch(CONFIG.API_URL);
     if (!res.ok) throw new Error('Erro na conexão com a API');
@@ -34,15 +36,24 @@ async function start() {
       return {
         name: p.name,
         id: id,
-        attack: Math.floor(Math.random() * 101) + 50, // Mock de Meta Stats
+        attack: Math.floor(Math.random() * 101) + 50,
         defense: Math.floor(Math.random() * 101) + 40 
       };
     });
 
+    // Remove a mensagem de carregamento antes de renderizar
+    if (loadingMsg) {
+      loadingMsg.remove();
+    }
+
+    // Renderiza a lista inicial no HOME
     render(pokemonList);
+
   } catch (err) {
     console.error(err);
-    grid.innerHTML = `<p class="col-span-full text-red-500 py-10">Falha ao carregar o Meta. Tente novamente mais tarde.</p>`;
+    if (grid) {
+      grid.innerHTML = `<p class="col-span-full text-red-500 py-10">Falha ao carregar o Meta. Tente novamente.</p>`;
+    }
   }
 }
 
@@ -52,7 +63,6 @@ async function start() {
 function render(list) {
   if (!grid) return;
 
-  // Limpa o grid (e remove mensagem de carregamento)
   grid.innerHTML = '';
 
   if (list.length === 0) {
@@ -87,9 +97,9 @@ function toggleCompare(id) {
   const index = compareList.findIndex(c => c.id === id);
 
   if (index > -1) {
-    compareList.splice(index, 1); // Remove se já estiver selecionado
+    compareList.splice(index, 1);
   } else if (compareList.length < 2) {
-    compareList.push(poke); // Adiciona se houver espaço
+    compareList.push(poke);
   }
 
   render(pokemonList);
@@ -133,15 +143,17 @@ function closeCompare() {
 }
 
 /**
- * Gerenciamento da Barra de Pesquisa
+ * Gerenciamento da Barra de Pesquisa e Botão Limpar
  */
 searchInput.addEventListener('input', (e) => {
   const term = e.target.value.toLowerCase();
   
-  // Controle de visibilidade do botão "X"
-  term.length > 0 ? clearBtn.classList.remove('hidden') : clearBtn.classList.add('hidden');
+  if (term.length > 0) {
+    clearBtn.classList.remove('hidden');
+  } else {
+    clearBtn.classList.add('hidden');
+  }
   
-  // Filtragem
   const filtered = pokemonList.filter(p => p.name.includes(term));
   render(filtered);
 });
