@@ -6,7 +6,7 @@
 
 O **PokéSearch** é uma aplicação web moderna e responsiva projetada para treinadores que buscam a "Elite" de cada espécie. O sistema analisa as variantes de um Pokémon e exibe automaticamente a forma com o maior **Base Stat Total (BST)**.
 
-[**✨ Ver Demonstração Ao Vivo**](https://lucasedusvlins.github.io/Pok-Meta/)
+[**✨ Ver Demonstração Ao Vivo**](https://lucasedusvlins.github.io/Pok-Search/)
 
 ---
 
