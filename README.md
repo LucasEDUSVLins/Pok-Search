@@ -1,24 +1,41 @@
-# ⚡ PokéMeta Pro
+# 🔍 PokéSearch
 
-Um catálogo moderno e responsivo para analisar os melhores Pokémon do Pokémon GO, utilizando dados em tempo real da **PokéMiners API**.
+**PokéSearch** é um buscador de elite avançado para treinadores Pokémon. O projeto foca em identificar a variação mais poderosa (maior BST - Base Stat Total) de qualquer espécie pesquisada, comparando formas Megas, Gigantamax e regionais em tempo real.
+
+!
 
 ## ✨ Funcionalidades
-- **📊 Meta Rankings:** Lista atualizada com os Pokémon mais fortes (foco em Attack).
-- **⚔️ Comparador:** Seleciona dois Pokémon para comparar as suas estatísticas base lado a lado.
-- **🔍 Busca Instantânea:** Filtra por nome em tempo real.
-- **🌓 Dark Mode:** Alterna entre tema claro e escuro.
-- **📱 Responsivo:** Otimizado para telemóveis, tablets e desktop.
 
-## 🛠️ Tecnologias
-- **HTML5 / CSS3** (Custom Glassmorphism)
-- **Tailwind CSS** (Design moderno)
-- **JavaScript ES6+** (Consumo de API e lógica)
-- **PokéMiners API** (Dados técnicos do jogo)
+-   **🏆 Elite Finder:** Algoritmo que analisa todas as variantes de um Pokémon e exibe automaticamente a versão com as melhores estatísticas.
+-   **⌨️ Smart Search:** Barra de pesquisa inteligente com sugestões automáticas (Autocomplete) e botão de limpeza rápida.
+-   **🌓 Dark Mode:** Suporte nativo a tema escuro com persistência de preferência via LocalStorage.
+-   **📊 Visualização Dinâmica:** Gráficos de barras coloridos dinamicamente com base no tipo principal do Pokémon.
+-   **📱 Responsividade:** Interface adaptável para uma experiência perfeita em dispositivos móveis e desktop.
 
-## 🚀 Como usar
-1. Clona o repositório.
-2. Abre o ficheiro `index.html` no teu navegador.
-3. Clica em dois cards para ativar o modo de comparação.
+## 🛠️ Tecnologias Utilizadas
 
----
-*Desenvolvido para treinadores que procuram o topo do ranking.*
+-   **HTML5 & CSS3:** Estrutura semântica e estilização moderna com variáveis CSS.
+-   **JavaScript (ES6+):** Lógica assíncrona para consumo da [PokéAPI](https://pokeapi.co/).
+-   **Google Fonts:** Fonte *Inter* para máxima legibilidade.
+
+## 🚀 Como Executar o Projeto
+
+1.  Clone este repositório:
+    ```bash
+    git clone [https://github.com/lucasedusvlins/Pok-Meta.git](https://github.com/lucasedusvlins/Pok-Meta.git)
+    ```
+2.  Acesse a pasta do projeto:
+    ```bash
+    cd Pok-Meta
+    ```
+3.  Abra o arquivo `index.html` no seu navegador.
+
+## 📁 Estrutura de Arquivos
+
+```text
+├── index.html          # Página principal
+├── css/
+│   └── style.css       # Estilização e temas (Light/Dark)
+├── js/
+│   └── app.js          # Lógica da API, Busca e UI
+└── README.md           # Documentação do projeto
