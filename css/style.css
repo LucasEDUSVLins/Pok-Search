@@ -10,6 +10,32 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); }
 
+/* Cores do Tema Escuro */
+body.dark-mode {
+    --bg-body: #0f172a;
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+}
+
+body.dark-mode .pokemon-card {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+/* Estilo do Botão */
+.theme-btn {
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    border: none;
+    background: var(--primary);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+}
+
 .main-header { padding: 4rem 1rem; text-align: center; }
 .logo { font-size: 3rem; font-weight: 900; letter-spacing: -2px; }
 .logo-alt { color: var(--primary); }

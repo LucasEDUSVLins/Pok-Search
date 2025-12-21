@@ -58,4 +58,19 @@ async function findElite() {
     }
 }
 
+const themeToggle = document.getElementById('themeToggle');
+
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    
+    // Salva a preferência do usuário
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('dark-theme', isDark);
+});
+
+// Verifica se o usuário já usou o dark mode antes
+if (localStorage.getItem('dark-theme') === 'true') {
+    document.body.classList.add('dark-mode');
+}
+
 document.getElementById('searchInput')?.addEventListener('keypress', e => e.key === 'Enter' && findElite());
