@@ -5,33 +5,28 @@ function renderBest(p, originalName) {
     
     document.getElementById('grid').innerHTML = `
         <article class="pokemon-card">
-            <div class="card-header" style="background: radial-gradient(circle, ${colors[0]} 0%, ${colors[1]} 100%)">
-                <img src="${CONFIG.IMG_BASE}${p.id}.png" class="pokemon-img" alt="${p.name}">
+            <div class="card-header" style="background: linear-gradient(135deg, ${colors[0]}, ${colors[1]})">
+                <img src="${CONFIG.IMG_BASE}${p.id}.png" class="pokemon-img">
             </div>
-            
             <div class="card-body">
                 <div class="info-row">
                     <div>
-                        <p class="poke-origin">Evolução de ${originalName}</p>
+                        <p class="tagline">Origem: ${originalName}</p>
                         <h2 class="poke-name">${p.name.replace(/-/g, ' ')}</h2>
                     </div>
-                    <div class="bst-container">
+                    <div style="text-align: right">
                         <p class="bst-value">${totalStats}</p>
-                        <p class="bst-label">Total BST</p>
+                        <p class="tagline">TOTAL BST</p>
                     </div>
                 </div>
-
                 <div class="stats-grid">
                     ${p.stats.map(s => `
                         <div class="stat-item">
                             <div class="stat-label-row">
-                                <span class="stat-name">${s.stat.name}</span>
-                                <span class="stat-number">${s.base_stat}</span>
+                                <span>${s.stat.name}</span><span>${s.base_stat}</span>
                             </div>
                             <div class="bar-bg">
-                                <div class="bar-fill" 
-                                     style="width: ${(s.base_stat/160)*100}%; background-color: ${colors[0]}">
-                                </div>
+                                <div class="bar-fill" style="width: ${(s.base_stat/160)*100}%; background: ${colors[0]}"></div>
                             </div>
                         </div>
                     `).join('')}
