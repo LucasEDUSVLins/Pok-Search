@@ -1,56 +1,12 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;900&display=swap');
 
-@layer components {
-  /* Limpeza do Body */
-  .page-setup {
-    @apply bg-slate-50 text-gray-900 font-sans min-h-screen;
-  }
+body { font-family: 'Inter', sans-serif; }
 
-  /* Nav Ultra Limpa */
-  .navbar {
-    @apply sticky top-0 z-50 p-4 border-b bg-white/80 backdrop-blur-md shadow-sm;
-  }
-
-  .nav-container {
-    @apply max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4;
-  }
-
-  /* Input de Busca Profissional */
-  .search-box {
-    @apply w-full bg-gray-50 border border-gray-200 px-5 py-3 pr-12 rounded-2xl 
-           outline-none focus:ring-4 ring-blue-500/20 focus:border-blue-500 
-           transition-all shadow-inner;
-  }
-
-  /* Cards e Grid */
-  .main-grid {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center;
-  }
-
-  /* Modais */
-  .modal-overlay {
-    @apply hidden fixed inset-0 z-[110] bg-black/60 backdrop-blur-md flex items-center justify-center p-4;
-  }
-
-  .modal-card {
-    @apply bg-white w-full max-w-md rounded-3xl overflow-hidden relative shadow-2xl;
-  }
-
-  .btn-close {
-    @apply absolute top-4 right-4 z-10 bg-white/80 rounded-full w-8 h-8 
-           flex items-center justify-center hover:bg-red-500 hover:text-white 
-           transition-all shadow-md font-bold;
-  }
+.animate-pop {
+    animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
 }
 
-/* Animações Personalizadas */
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-.animate-slide-up {
-  animation: slideUp 0.4s ease-out forwards;
+@keyframes pop {
+    from { transform: scale(0.9); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
 }
