@@ -80,7 +80,8 @@ const searchInput = document.getElementById('searchInput');
 clearBtn.addEventListener('click', () => {
     searchInput.value = '';
     searchInput.focus();
-    clearBtn.style.display = 'none';
+    // Opcional: Limpa o grid se quiser resetar a tela ao limpar a busca
+    // document.getElementById('grid').innerHTML = ''; 
 });
 
 // 2. Lógica de Sugestões (Auto-complete)
