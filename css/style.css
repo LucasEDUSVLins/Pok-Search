@@ -138,13 +138,10 @@ body.dark-mode .logo-pinap {
     font-size: 1.6rem;
     color: var(--text-muted);
     cursor: pointer;
-    z-index: 10;
+    z-index: 20;
     line-height: 1;
     display: none;
-}
-
-.search-input:not(:placeholder-shown)+.clear-btn {
-    display: block;
+    pointer-events: auto;
 }
 
 .search-hint {

@@ -11,6 +11,15 @@ const COLORS = {
 };
 
 let allPokemonNames = [];
+const searchInput = document.getElementById('searchInput');
+const box = document.getElementById('customSuggestions');
+const themeToggle = document.getElementById('themeToggle');
+const clearBtn = document.getElementById('clearSearch');
+
+// Inicialização do Tema
+if (localStorage.getItem('dark-theme') === 'true') {
+    document.body.classList.add('dark-mode');
+}
 
 async function initSearch() {
     try {
@@ -28,9 +37,8 @@ async function findElite() {
         logoIcon.classList.add('animate-jump');
     }
 
-    const input = document.getElementById('searchInput');
     const grid = document.getElementById('grid');
-    const query = input.value.toLowerCase().trim();
+    const query = searchInput.value.toLowerCase().trim();
     if (!query) return;
 
     grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">ESCANEANDO POKÉAPI...</p>`;
@@ -38,10 +46,8 @@ async function findElite() {
     try {
         const p = await fetch(`${POKE_API}pokemon/${query}`).then(r => r.json());
         const s = await fetch(p.species.url).then(r => r.json());
-
         const evoRes = await fetch(s.evolution_chain.url);
         const evoData = await evoRes.json();
-
         renderFullCard(p, s, evoData);
     } catch (err) {
         grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">NÃO ENCONTRADO NA POKÉAPI</p>`;
@@ -79,34 +85,28 @@ function renderFullCard(p, s, evo) {
                         <p class="tagline">BST TOTAL</p>
                     </div>
                 </div>
-
                 <div class="go-details-grid">
                     <div class="detail-item"><strong>Evoluções</strong><span>${evoCount} estágios</span></div>
                     <div class="detail-item"><strong>Requisito</strong><span>${requirement}</span></div>
                     <div class="detail-item"><strong>Grupo Ovo</strong><span>${s.egg_groups[0]?.name || 'N/A'}</span></div>
                     <div class="detail-item"><strong>Felicidade</strong><span>${s.base_happiness}</span></div>
                 </div>
-
-                <div class="stat-label">Status Máximos (Base)</div>
+                <div class="stat-label">Status Base</div>
                 <div class="stats-row">
                     <p><strong>ATK</strong> ${p.stats[1].base_stat}</p>
                     <p><strong>DEF</strong> ${p.stats[2].base_stat}</p>
                     <p><strong>HP</strong> ${p.stats[0].base_stat}</p>
                 </div>
-                <div class="data-source"><small>📚 FONTE: DADOS REAIS POKÉAPI OFICIAL</small></div>
+                <div class="data-source"><small>📚 FONTE: POKÉAPI OFICIAL</small></div>
             </div>
         </article>`;
 }
 
-const searchInput = document.getElementById('searchInput');
-const box = document.getElementById('customSuggestions');
-const themeToggle = document.getElementById('themeToggle');
-const clearBtn = document.getElementById('clearSearch');
-
+// Eventos de Interface
 searchInput?.addEventListener('input', () => {
     const val = searchInput.value.toLowerCase().trim();
     box.innerHTML = '';
-    if (clearBtn) clearBtn.style.display = val.length > 0 ? 'block' : 'none';
+    clearBtn.style.display = val.length > 0 ? 'block' : 'none';
 
     if (val.length > 0) {
         const matches = allPokemonNames.filter(n => n.includes(val)).slice(0, 6);
@@ -131,7 +131,6 @@ themeToggle?.addEventListener('click', () => {
     const isDark = document.body.classList.toggle('dark-mode');
     localStorage.setItem('dark-theme', isDark);
 });
-if (localStorage.getItem('dark-theme') === 'true') document.body.classList.add('dark-mode');
 
 clearBtn?.addEventListener('click', () => {
     searchInput.value = '';
