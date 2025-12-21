@@ -77,9 +77,9 @@ function renderFullCard(p, s, evo, damageData) {
                         <p class="tagline">ID #${p.id} • ${typesHtml}</p>
                         <h2 class="name">${p.name}</h2>
                     </div>
-                    <div style="text-align:right">
-                        <span class="bst-num" style="color:${color[1]}">${bst}</span>
-                        <p class="tagline">BST TOTAL</p>
+                    <div style="text-align:right; min-width: 100px;">
+                        <span class="bst-num">${bst}</span>
+                        <p class="tagline" style="margin-top: 5px;">BST TOTAL</p>
                     </div>
                 </div>
 

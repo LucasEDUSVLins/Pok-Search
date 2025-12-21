@@ -191,6 +191,7 @@ body.dark-mode .logo-pinap {
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 1.5rem;
+    gap: 15px;
 }
 
 .name {
@@ -201,12 +202,17 @@ body.dark-mode .logo-pinap {
 }
 
 .bst-num {
+    display: inline-block;
+    /* Garante que o padding funcione bem */
     background: var(--primary);
     color: white !important;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.8rem;
     border-radius: 0.8rem;
     font-size: 1.2rem !important;
     font-weight: 900;
+    margin-bottom: 4px;
+    /* Cria espaço para a etiqueta abaixo */
+    line-height: 1;
 }
 
 /* --- GRID DE DETALHES GO --- */
@@ -329,7 +335,7 @@ body.dark-mode .logo-pinap {
     text-transform: uppercase;
     margin-right: 4px;
     margin-bottom: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .detail-item div {
