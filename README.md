@@ -2,8 +2,6 @@
 
 **PokéSearch** é um buscador de elite avançado para treinadores Pokémon. O projeto foca em identificar a variação mais poderosa (maior BST - Base Stat Total) de qualquer espécie pesquisada, comparando formas Megas, Gigantamax e regionais em tempo real.
 
-!
-
 ## ✨ Funcionalidades
 
 -   **🏆 Elite Finder:** Algoritmo que analisa todas as variantes de um Pokémon e exibe automaticamente a versão com as melhores estatísticas.
