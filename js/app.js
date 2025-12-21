@@ -160,10 +160,58 @@ clearBtn?.addEventListener('click', () => {
     searchInput.focus();
 });
 
-searchInput?.addEventListener('keypress', e => e.key === 'Enter' && (suggestionsBox.style.display = 'none', findElite()));
+searchInput.addEventListener('input', () => {
+    const value = searchInput.value.toLowerCase().trim();
+    suggestionsBox.innerHTML = '';
 
-document.addEventListener('click', (e) => {
-    if (!e.target.closest('.search-box')) suggestionsBox.style.display = 'none';
+    if (value.length > 0) {
+        const filtered = allPokemonGO
+            .filter(p => p.slug.includes(value) || p.name.toLowerCase().includes(value))
+            .slice(0, 10);
+
+        if (filtered.length > 0) {
+            suggestionsBox.style.display = 'block';
+            filtered.forEach(p => {
+                const div = document.createElement('div');
+                div.classList.add('suggestion-item');
+                div.textContent = p.name;
+                div.onclick = () => {
+                    searchInput.value = p.name;
+                    suggestionsBox.style.display = 'none';
+                    findEliteBySlug(p.slug);
+                };
+                suggestionsBox.appendChild(div);
+            });
+        } else { suggestionsBox.style.display = 'none'; }
+    } else { suggestionsBox.style.display = 'none'; }
 });
+
+function findEliteBySlug(slug) {
+    const pokemon = allPokemonGO.find(p => p.slug === slug);
+    if (pokemon) renderGoCard(pokemon);
+}
+
+async function findElite() {
+
+    const input = document.getElementById('searchInput');
+    const grid = document.getElementById('grid');
+    const query = input.value.toLowerCase().trim().replace(/\s+/g, '-');
+
+    if (!query) return;
+
+    grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">SINCRONIZANDO...</p>`;
+
+    const pokemon = allPokemonGO.find(p =>
+        p.slug === query ||
+        p.name.toLowerCase() === query.replace(/-/g, ' ')
+    );
+
+    if (!pokemon) {
+        grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">POKÉMON NÃO ENCONTRADO NA BASE GO</p>`;
+        return;
+    }
+
+    renderGoCard(pokemon);
+}
 
 initSearch();
