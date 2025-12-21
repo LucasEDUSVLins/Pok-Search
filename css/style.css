@@ -73,12 +73,12 @@ body.dark-mode {
     color: white;
 }
 
-/* --- SEÇÃO DA BUSCA (CORRIGIDA) --- */
 .search-box {
     margin: 2rem auto 0;
     max-width: 500px;
-    /* Largura ideal */
-    width: 90%;
+    /* Mantém a largura elegante */
+    width: 95%;
+    text-align: center;
 }
 
 .input-wrapper {
@@ -90,8 +90,9 @@ body.dark-mode {
 
 .search-input {
     width: 100%;
-    padding: 1.25rem 4.5rem 1.25rem 1.5rem;
-    /* Padding largo para acomodar o X */
+    padding: 1.25rem;
+    padding-right: 4.5rem;
+    /* Espaço para o X e a seta do datalist */
     border-radius: 1.2rem;
     border: 2px solid #e2e8f0;
     font-size: 1.1rem;
@@ -111,7 +112,7 @@ body.dark-mode {
 .clear-btn {
     position: absolute;
     right: 3.2rem;
-    /* Posicionado antes da seta do datalist */
+    /* Posicionado antes da seta seletora */
     background: none;
     border: none;
     font-size: 1.6rem;
@@ -120,17 +121,17 @@ body.dark-mode {
     z-index: 10;
     line-height: 1;
     display: none;
-    /* Só aparece via JS ou CSS se houver texto */
+    /* Só aparece quando há texto */
 }
 
-/* Mostra o X apenas quando o input não está vazio */
 .search-input:not(:placeholder-shown)+.clear-btn {
     display: block;
 }
 
 .search-hint {
     display: block;
-    margin-top: 1.5rem;
+    margin-top: 1.8rem;
+    /* Aumentado para não sufocar a barra */
     font-size: 0.75rem;
     font-weight: 800;
     color: var(--text-muted);
