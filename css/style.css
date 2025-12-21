@@ -1,53 +1,52 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap');
 
-/* Reset e Estrutura */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: 'Inter', sans-serif; background-color: #f8fafc; min-height: 100vh; }
+@layer components {
+    /* Estrutura Base */
+    .app-body { @apply bg-slate-50 min-h-screen font-['Inter'] text-slate-900; }
+    .main-header { @apply py-12 text-center; }
+    .brand { @apply text-5xl font-black tracking-tighter; }
+    .brand-alt { @apply text-blue-600; }
+    .tagline { @apply text-slate-500 font-bold text-xs uppercase tracking-widest mt-1; }
 
-/* Header */
-.main-header { padding: 40px 0; text-align: center; }
-.brand { font-size: 2.5rem; font-weight: 900; color: #1e293b; }
-.brand-alt { color: #2563eb; }
-.tagline { color: #64748b; font-weight: 700; font-size: 0.875rem; }
+    /* Input de Busca */
+    .search-wrapper { @apply mt-10 max-w-md mx-auto px-6; }
+    .search-field { 
+        @apply w-full p-5 rounded-2xl border-2 border-slate-200 bg-white
+               focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 
+               outline-none shadow-xl transition-all duration-300 text-lg;
+    }
+    .search-note { @apply mt-3 text-[10px] text-slate-400 font-black uppercase tracking-wider; }
 
-/* Busca */
-.search-wrapper { margin-top: 32px; max-width: 448px; margin-left: auto; margin-right: auto; padding: 0 16px; }
-.search-field { 
-    width: 100%; padding: 16px; border-radius: 16px; border: 2px solid #e2e8f0; 
-    outline: none; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); transition: all 0.3s;
+    /* Card do Pokémon */
+    .content-grid { @apply max-w-4xl mx-auto px-6 pb-24; }
+    .pokemon-card { 
+        @apply bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border-4 border-white animate-pop; 
+    }
+    .card-header { @apply p-12 flex justify-center items-center relative; }
+    .pokemon-img { @apply w-72 h-72 z-10 drop-shadow-[0_20px_30px_rgba(0,0,0,0.3)]; }
+
+    /* Info e Stats */
+    .card-body { @apply p-10; }
+    .info-row { @apply flex justify-between items-end mb-10 border-b border-slate-100 pb-6; }
+    .poke-name { @apply text-4xl font-black capitalize tracking-tight; }
+    .poke-origin { @apply text-slate-400 font-bold text-xs uppercase; }
+    .bst-container { @apply text-right; }
+    .bst-value { @apply text-5xl font-black text-blue-600 leading-none; }
+    .bst-label { @apply text-[10px] font-black text-slate-300 uppercase; }
+
+    .stats-grid { @apply grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-6; }
+    .stat-label-row { @apply flex justify-between mb-2; }
+    .stat-name { @apply text-[11px] font-black text-slate-500 uppercase tracking-tighter; }
+    .stat-number { @apply text-xs font-bold text-slate-800; }
+    
+    /* Progress Bar */
+    .bar-bg { @apply w-full bg-slate-100 h-2.5 rounded-full overflow-hidden; }
+    .bar-fill { @apply h-full rounded-full transition-all duration-1000 ease-out; }
+
+    /* Status */
+    .status-msg { @apply text-center py-20 font-black text-slate-300 text-xl uppercase tracking-widest; }
+    .error-msg { @apply text-red-400 border-2 border-red-50; }
 }
-.search-field:focus { border-color: #2563eb; }
-.search-note { margin-top: 8px; font-size: 10px; color: #94a3b8; font-weight: 700; text-transform: uppercase; }
 
-/* Grid e Card */
-.content-grid { max-width: 1152px; margin: 0 auto; padding: 0 16px 80px; }
-
-.pokemon-card {
-    max-width: 672px; margin: 0 auto; background: white; border-radius: 2rem;
-    shadow: 0 25px 50px -12px rgba(0,0,0,0.25); overflow: hidden; border: 4px solid #facc15;
-}
-
-.card-header { padding: 40px; text-align: center; }
-.pokemon-img { width: 256px; height: 256px; margin: 0 auto; filter: drop-shadow(0 20px 13px rgba(0,0,0,0.1)); }
-
-.card-body { padding: 32px; }
-.info-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; }
-.poke-name { font-size: 2.25rem; font-weight: 900; color: #1e293b; text-transform: capitalize; }
-.poke-origin { color: #94a3b8; font-weight: 700; text-transform: uppercase; font-size: 10px; }
-.bst-value { font-size: 2.25rem; font-weight: 900; color: #2563eb; }
-.bst-label { text-align: right; font-size: 10px; font-weight: 700; color: #94a3b8; }
-
-/* Stats */
-.stats-grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-@media (min-width: 768px) { .stats-grid { grid-template-columns: 1fr 1fr; } }
-
-.stat-label-row { display: flex; justify-content: space-between; font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase; margin-bottom: 4px; }
-.bar-bg { width: 100%; background: #f1f5f9; height: 8px; border-radius: 999px; overflow: hidden; }
-.bar-fill { background: #3b82f6; height: 100%; border-radius: 999px; }
-
-/* Animações e Status */
-.animate-pop { animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-@keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-
-.status-msg { text-align: center; padding: 80px 0; font-weight: 900; color: #94a3b8; }
-.error-msg { color: #ef4444; }
+.animate-pop { animation: pop 0.5s cubic-bezier(0.26, 0.53, 0.74, 1.48) forwards; }
+@keyframes pop { from { transform: translateY(30px) scale(0.95); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
