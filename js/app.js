@@ -23,6 +23,12 @@ async function initSearch() {
 }
 
 async function findElite() {
+    const logoIcon = document.querySelector('.logo-pinap');
+    if (logoIcon) {
+        logoIcon.classList.remove('animate-jump');
+        void logoIcon.offsetWidth;
+        logoIcon.classList.add('animate-jump');
+    }
     const input = document.getElementById('searchInput');
     const grid = document.getElementById('grid');
     const query = input.value.toLowerCase().trim();

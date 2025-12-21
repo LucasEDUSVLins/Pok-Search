@@ -6,11 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PokéSearch - Encontre sua Elite</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml"
+        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 35 L65 10 L50 20 L35 10 Z' fill='%2322c55e'/><path d='M30 40 Q30 35 35 35 L65 35 Q70 35 70 40 L75 70 Q75 85 50 85 Q25 85 25 70 Z' fill='%23facc15'/></svg>">
 </head>
 
 <body class="app-container">
     <header class="main-header">
-        <h1 class="logo">POKÉ<span class="logo-alt">SEARCH</span></h1>
+        <div class="logo-container">
+            <svg class="logo-pinap" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 35 L65 10 L50 20 L35 10 Z" fill="#22c55e" />
+                <path d="M50 35 L85 20 L55 30 L50 20 L45 30 L15 20 Z" fill="#16a34a" />
+                <path d="M30 40 Q30 35 35 35 L65 35 Q70 35 70 40 L75 70 Q75 85 50 85 Q25 85 25 70 Z" fill="#facc15" />
+                <path d="M40 50 h20 M35 60 h30 M40 70 h20" stroke="#ca8a04" stroke-width="3" stroke-linecap="round"
+                    opacity="0.6" />
+            </svg>
+            <h1 class="logo">POKÉ<span class="logo-alt">SEARCH</span></h1>
+        </div>
         <p class="tagline">Scanner de Versões Elite</p>
 
         <button id="themeToggle" class="theme-btn">Alternar Tema</button>
