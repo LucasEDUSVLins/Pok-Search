@@ -3,66 +3,45 @@
 :root {
     --bg-body: #f8fafc;
     --primary: #2563eb;
-    --accent: #facc15;
     --text-main: #1e293b;
     --text-muted: #64748b;
-    --card-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: var(--bg-body); color: var(--text-main); }
 
-body { 
-    font-family: 'Inter', sans-serif; 
-    background-color: var(--bg-body); 
-    color: var(--text-main);
-    line-height: 1.5;
-}
-
-/* Header & Search */
 .main-header { padding: 4rem 1rem; text-align: center; }
 .logo { font-size: 3rem; font-weight: 900; letter-spacing: -2px; }
 .logo-alt { color: var(--primary); }
-.tagline { font-weight: 700; color: var(--text-muted); font-size: 0.875rem; text-transform: uppercase; }
+.tagline { font-weight: 700; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; }
 
-.search-box { margin-top: 2rem; max-width: 400px; margin-inline: auto; position: relative; }
+.search-box { margin-top: 2rem; max-width: 450px; margin-inline: auto; }
 .search-input { 
     width: 100%; padding: 1.25rem; border-radius: 1rem; border: 2px solid #e2e8f0;
-    font-size: 1rem; outline: none; transition: all 0.2s; box-shadow: var(--card-shadow);
+    font-size: 1.1rem; outline: none; transition: 0.3s; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
 }
 .search-input:focus { border-color: var(--primary); transform: translateY(-2px); }
 .search-hint { display: block; margin-top: 0.5rem; font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; }
 
-/* Main Content */
-.main-content { max-width: 800px; margin: 0 auto; padding: 0 1.5rem 5rem; }
+.main-content { max-width: 900px; margin: 0 auto; padding-bottom: 5rem; }
 
-/* Pokemon Card */
 .pokemon-card {
     background: white; border-radius: 2.5rem; overflow: hidden;
-    box-shadow: var(--card-shadow); border: 4px solid var(--accent);
-    animation: slideUp 0.5s ease-out;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); border: 4px solid #facc15;
+    animation: pop 0.4s ease-out;
 }
 
-.card-banner { padding: 3rem; display: flex; justify-content: center; position: relative; }
-.pokemon-sprite { width: 280px; height: 280px; filter: drop-shadow(0 20px 10px rgba(0,0,0,0.25)); z-index: 2; }
+.card-banner { padding: 3rem; display: flex; justify-content: center; }
+.pokemon-sprite { width: 280px; height: 280px; filter: drop-shadow(0 20px 10px rgba(0,0,0,0.2)); }
 
 .card-info { padding: 2.5rem; }
-.title-group { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; }
-.name { font-size: 2.5rem; font-weight: 900; text-transform: capitalize; line-height: 1; }
-.origin { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
-.bst-box { text-align: right; }
+.title-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; }
+.name { font-size: 2.5rem; font-weight: 900; text-transform: capitalize; }
 .bst-num { font-size: 3rem; font-weight: 900; color: var(--primary); line-height: 1; }
 
-/* Stats Bar */
-.stats-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
-.stat-row { margin-bottom: 0.5rem; }
-.stat-label { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 900; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.25rem; }
-.bar-outer { background: #f1f5f9; height: 10px; border-radius: 10px; overflow: hidden; }
-.bar-inner { height: 100%; border-radius: 10px; transition: width 1s ease-out; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; }
+.stat-label { display: flex; justify-content: space-between; font-size: 0.7rem; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin-bottom: 0.4rem; }
+.bar-bg { background: #f1f5f9; height: 10px; border-radius: 10px; overflow: hidden; }
+.bar-fill { height: 100%; transition: width 1s ease-out; }
 
-/* Messages */
-.status-text { text-align: center; padding: 5rem; font-weight: 900; color: #cbd5e1; font-size: 1.25rem; }
-
-@keyframes slideUp {
-    from { transform: translateY(20px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
+@keyframes pop { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }

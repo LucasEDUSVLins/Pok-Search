@@ -12,75 +12,49 @@ const COLORS = {
     bug: ['#a3e635', '#4d7c0f'], ghost: ['#818cf8', '#4c1d95'], steel: ['#94a3b8', '#475569']
 };
 
-const input = document.getElementById('searchInput');
-const grid = document.getElementById('grid');
-
-async function searchPokemon() {
-    const query = input.value.toLowerCase().trim();
+async function findElite() {
+    const query = document.getElementById('searchInput').value.toLowerCase().trim();
+    const grid = document.getElementById('grid');
     if (!query) return;
 
-    grid.innerHTML = `<p class="status-text">ANALISANDO DADOS...</p>`;
+    grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">ESCANEANDO...</p>`;
 
     try {
-        const speciesRes = await fetch(`${POKE_API.SPECIES}${query}`);
-        if (!speciesRes.ok) throw new Error('Not Found');
-        const speciesData = await speciesRes.json();
+        const res = await fetch(`${POKE_API.SPECIES}${query}`);
+        const data = await res.json();
+        const variants = await Promise.all(data.varieties.map(v => fetch(v.pokemon.url).then(r => r.json())));
 
-        // Busca todas as variedades em paralelo
-        const variantPromises = speciesData.varieties.map(v => fetch(v.pokemon.url).then(r => r.json()));
-        const variants = await Promise.all(variantPromises);
+        const elite = variants.reduce((a, b) => 
+            (b.stats.reduce((s, c) => s + c.base_stat, 0) > a.stats.reduce((s, c) => s + c.base_stat, 0)) ? b : a
+        );
 
-        // Encontra a versão com maior BST (Base Stat Total)
-        const elite = variants.reduce((prev, curr) => {
-            const getBST = (p) => p.stats.reduce((acc, s) => acc + s.base_stat, 0);
-            return getBST(curr) > getBST(prev) ? curr : prev;
-        });
+        const bst = elite.stats.reduce((s, c) => s + c.base_stat, 0);
+        const type = elite.types[0].type.name;
+        const color = COLORS[type] || ['#94a3b8', '#475569'];
 
-        renderCard(elite, speciesData.name);
-    } catch (err) {
-        grid.innerHTML = `<p class="status-text" style="color:#f87171">POKÉMON NÃO ENCONTRADO</p>`;
+        grid.innerHTML = `
+            <article class="pokemon-card">
+                <div class="card-banner" style="background: linear-gradient(135deg, ${color[0]}, ${color[1]})">
+                    <img src="${POKE_API.SPRITE}${elite.id}.png" class="pokemon-sprite">
+                </div>
+                <div class="card-info">
+                    <div class="title-row">
+                        <div><p class="tagline">Base: ${data.name}</p><h2 class="name">${elite.name.replace(/-/g, ' ')}</h2></div>
+                        <div style="text-align:right"><p class="bst-num">${bst}</p><p class="tagline">BST TOTAL</p></div>
+                    </div>
+                    <div class="stats-grid">
+                        ${elite.stats.map(s => `
+                            <div class="stat-item">
+                                <div class="stat-label"><span>${s.stat.name}</span><span>${s.base_stat}</span></div>
+                                <div class="bar-bg"><div class="bar-fill" style="width: ${(s.base_stat/160)*100}%; background: ${color[0]}"></div></div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            </article>`;
+    } catch {
+        grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">POKÉMON NÃO ENCONTRADO</p>`;
     }
 }
 
-function renderCard(pokemon, originalName) {
-    const bst = pokemon.stats.reduce((acc, s) => acc + s.base_stat, 0);
-    const type = pokemon.types[0].type.name;
-    const colorPair = COLORS[type] || ['#94a3b8', '#475569'];
-
-    grid.innerHTML = `
-        <article class="pokemon-card">
-            <div class="card-banner" style="background: linear-gradient(135deg, ${colorPair[0]}, ${colorPair[1]})">
-                <img src="${POKE_API.SPRITE}${pokemon.id}.png" class="pokemon-sprite" alt="${pokemon.name}">
-            </div>
-            
-            <div class="card-info">
-                <div class="title-group">
-                    <div>
-                        <span class="origin">DNA de ${originalName}</span>
-                        <h2 class="name">${pokemon.name.replace(/-/g, ' ')}</h2>
-                    </div>
-                    <div class="bst-box">
-                        <p class="bst-num">${bst}</p>
-                        <span class="tagline">Total BST</span>
-                    </div>
-                </div>
-
-                <div class="stats-container">
-                    ${pokemon.stats.map(s => `
-                        <div class="stat-row">
-                            <div class="stat-label">
-                                <span>${s.stat.name}</span>
-                                <span>${s.base_stat}</span>
-                            </div>
-                            <div class="bar-outer">
-                                <div class="bar-inner" style="width: ${(s.base_stat/160)*100}%; background-color: ${colorPair[0]}"></div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        </article>
-    `;
-}
-
-input.addEventListener('keypress', (e) => e.key === 'Enter' && searchPokemon());
+document.getElementById('searchInput').addEventListener('keypress', e => e.key === 'Enter' && findElite());
