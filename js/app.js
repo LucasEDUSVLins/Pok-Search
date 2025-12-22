@@ -87,7 +87,7 @@ function renderFullCard(p, s, evo, damageData) {
             </div>
             <div class="card-info">
                 <div class="title-row">
-                    <div><p class="tagline">ID #${p.id} • ${typesHtml}</p><h2 class="name">${p.name.replace('-', ' ')}</h2></div>
+                    <div><p class="tagline">ID #${p.id} • ${typesHtml}</p><h2 class="name">${p.name.replace(/-/g, ' ')}</h2></div>
                     <div style="text-align:right; min-width: 100px;"><span class="bst-num">${bst}</span><p class="tagline" style="margin-top:5px">BST TOTAL</p></div>
                 </div>
                 <div class="go-details-grid">
