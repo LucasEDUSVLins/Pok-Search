@@ -39,6 +39,8 @@ async function findElite() {
 
     grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">ELITE FINDER: ANALISANDO VARIANTES...</p>`;
 
+    const startTime = Date.now();
+
     try {
         const species = await fetch(`${POKE_API}pokemon-species/${query}`).then(r => r.json());
         const varietiesData = await Promise.all(species.varieties.map(v => fetch(v.pokemon.url).then(r => r.json())));
@@ -54,8 +56,12 @@ async function findElite() {
             Promise.all(elite.types.map(t => fetch(t.type.url).then(r => r.json())))
         ]);
 
+        const duration = Date.now() - startTime;
+        updateSystemStatus(duration > 2000 ? 'unstable' : 'ok');
+
         renderFullCard(elite, species, evoRes, damageData);
     } catch (err) {
+        updateSystemStatus('error');
         grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">POKÉMON NÃO ENCONTRADO</p>`;
     }
 }
@@ -108,6 +114,7 @@ function renderFullCard(p, s, evo, damageData) {
 function updateSystemStatus(state) {
     const indicator = document.getElementById('statusIndicator');
     const text = document.getElementById('statusText');
+    if (!indicator || !text) return;
 
     indicator.className = 'status-circle';
 
@@ -119,10 +126,9 @@ function updateSystemStatus(state) {
         text.textContent = 'Sistema Instável';
     } else {
         indicator.classList.add('status-red');
-        text.textContent = 'Sistema Offline / Erro';
+        text.textContent = 'Erro de Conexão';
     }
 }
-
 
 searchInput?.addEventListener('input', () => {
     const val = searchInput.value.toLowerCase().trim();
