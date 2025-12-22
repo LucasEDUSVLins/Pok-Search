@@ -349,6 +349,79 @@ body.dark-mode .logo-pinap {
     padding-left: 1.5rem;
 }
 
+.main-footer {
+    margin-top: 4rem;
+    padding: 2rem 1rem;
+    border-top: 1px solid var(--bar-bg);
+    text-align: center;
+}
+
+.footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+}
+
+.footer-links {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.footer-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: 0.2s;
+}
+
+.footer-links a:hover {
+    color: var(--primary);
+}
+
+.site-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--bar-bg);
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.status-circle {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.status-green {
+    background: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
+}
+
+.status-yellow {
+    background: #eab308;
+    box-shadow: 0 0 8px #eab308;
+}
+
+.status-red {
+    background: #ef4444;
+    box-shadow: 0 0 8px #ef4444;
+}
+
+.copyright {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+}
+
 body.dark-mode .suggestions-list {
     border-color: #334155;
 }

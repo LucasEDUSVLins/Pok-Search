@@ -105,6 +105,25 @@ function renderFullCard(p, s, evo, damageData) {
         </article>`;
 }
 
+function updateSystemStatus(state) {
+    const indicator = document.getElementById('statusIndicator');
+    const text = document.getElementById('statusText');
+
+    indicator.className = 'status-circle';
+
+    if (state === 'ok') {
+        indicator.classList.add('status-green');
+        text.textContent = 'Sistema Operacional';
+    } else if (state === 'unstable') {
+        indicator.classList.add('status-yellow');
+        text.textContent = 'Sistema Instável';
+    } else {
+        indicator.classList.add('status-red');
+        text.textContent = 'Sistema Offline / Erro';
+    }
+}
+
+
 searchInput?.addEventListener('input', () => {
     const val = searchInput.value.toLowerCase().trim();
     box.innerHTML = '';
