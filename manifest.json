@@ -1,0 +1,17 @@
+{
+  "short_name": "PokéSearch",
+  "name": "PokéSearch - Scanner de Elite",
+  "description": "Scanner de Atributos Elite para treinadores Pokémon.",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><path d='M50 35 L65 10 L50 20 L35 10 Z' fill='%2322c55e'/><path d='M30 40 Q30 35 35 35 L65 35 Q70 35 70 40 L75 70 Q75 85 50 85 Q25 85 25 70 Z' fill='%23facc15'/></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "theme_color": "#2563eb",
+  "background_color": "#f8fafc"
+}
