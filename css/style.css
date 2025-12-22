@@ -203,7 +203,6 @@ body.dark-mode .logo-pinap {
 
 .bst-num {
     display: inline-block;
-    /* Garante que o padding funcione bem */
     background: var(--primary);
     color: white !important;
     padding: 0.5rem 0.8rem;
@@ -211,15 +210,13 @@ body.dark-mode .logo-pinap {
     font-size: 1.2rem !important;
     font-weight: 900;
     margin-bottom: 4px;
-    /* Cria espaço para a etiqueta abaixo */
     line-height: 1;
 }
 
-/* --- GRID DE DETALHES GO --- */
 .go-details-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
+    gap: 1.2rem;
     background: var(--bar-bg);
     padding: 1.5rem;
     border-radius: 1.5rem;
@@ -233,10 +230,7 @@ body.dark-mode .logo-pinap {
 }
 
 .detail-item strong {
-    font-size: 0.6rem;
-    text-transform: uppercase;
-    color: var(--text-muted);
-    letter-spacing: 0.8px;
+    margin-bottom: 4px;
 }
 
 .detail-item span {
@@ -245,7 +239,6 @@ body.dark-mode .logo-pinap {
     color: var(--text-main);
 }
 
-/* Status Horizontais */
 .stat-label {
     font-size: 0.7rem;
     font-weight: 900;
@@ -272,7 +265,6 @@ body.dark-mode .logo-pinap {
     margin-right: 5px;
 }
 
-/* Selo de Fonte */
 .data-source {
     text-align: center;
     margin-top: 1.5rem;
@@ -291,7 +283,6 @@ body.dark-mode .logo-pinap {
     gap: 6px;
 }
 
-/* Sugestões */
 .suggestions-list {
     position: absolute;
     top: calc(100% + 10px);

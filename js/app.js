@@ -31,20 +31,25 @@ async function findElite() {
     const query = searchInput.value.toLowerCase().trim();
     if (!query) return;
 
-    grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">ANALISANDO TIPO E FRAQUEZAS...</p>`;
+    grid.innerHTML = `<div class="loading">ESCANEANDO...</div>`;
 
     try {
-        const p = await fetch(`${POKE_API}pokemon/${query}`).then(r => r.json());
-        const s = await fetch(p.species.url).then(r => r.json());
+        const p = await fetch(`${POKE_API}pokemon/${query}`).then(r => {
+            if (!r.ok) throw new Error('Não encontrado');
+            return r.json();
+        });
+
+        const [s, damageData] = await Promise.all([
+            fetch(p.species.url).then(r => r.json()),
+            Promise.all(p.types.map(t => fetch(t.type.url).then(r => r.json())))
+        ]);
+
         const evoRes = await fetch(s.evolution_chain.url);
         const evoData = await evoRes.json();
 
-        // Busca dados de fraquezas para cada tipo do Pokémon
-        const damageData = await Promise.all(p.types.map(t => fetch(t.type.url).then(r => r.json())));
-
         renderFullCard(p, s, evoData, damageData);
     } catch (err) {
-        grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">ERRO AO BUSCAR DADOS ELITE</p>`;
+        grid.innerHTML = `<p class="error">POKÉMON NÃO LOCALIZADO</p>`;
     }
 }
 
@@ -54,14 +59,27 @@ function renderFullCard(p, s, evo, damageData) {
     const color = COLORS[mainType] || ['#94a3b8', '#475569'];
     const bst = p.stats.reduce((acc, stat) => acc + stat.base_stat, 0);
 
-    // Lógica de Fraquezas (Dano x2)
     const weaknesses = new Set();
+    const resistances = new Set();
+
     damageData.forEach(d => {
+
         d.damage_relations.double_damage_from.forEach(type => weaknesses.add(type.name));
+
+        d.damage_relations.half_damage_from.forEach(type => resistances.add(type.name));
+
+        d.damage_relations.no_damage_from.forEach(type => resistances.add(type.name));
     });
 
-    const weaknessesHtml = Array.from(weaknesses).map(w =>
+    const finalWeaknesses = Array.from(weaknesses).filter(w => !resistances.has(w));
+    const finalResistances = Array.from(resistances).filter(r => !weaknesses.has(r));
+
+    const weaknessesHtml = finalWeaknesses.map(w =>
         `<span class="type-badge" style="background:${COLORS[w]?.[0] || '#ccc'}">${w.toUpperCase()}</span>`
+    ).join('');
+
+    const resistancesHtml = finalResistances.map(r =>
+        `<span class="type-badge" style="background:${COLORS[r]?.[1] || '#ccc'}">${r.toUpperCase()}</span>`
     ).join('');
 
     const typesHtml = p.types.map(t => `<span style="color: ${COLORS[t.type.name][0]}">${t.type.name.toUpperCase()}</span>`).join(' / ');
@@ -84,10 +102,10 @@ function renderFullCard(p, s, evo, damageData) {
                 </div>
 
                 <div class="go-details-grid">
-                    <div class="detail-item"><strong>Fraquezas</strong><div>${weaknessesHtml}</div></div>
+                    <div class="detail-item"><strong>Fraquezas (2x)</strong><div>${weaknessesHtml || 'Nenhuma'}</div></div>
+                    <div class="detail-item"><strong>Resistências</strong><div>${resistancesHtml || 'Nenhuma'}</div></div>
                     <div class="detail-item"><strong>Grupo Ovo</strong><span>${s.egg_groups[0]?.name || 'N/A'}</span></div>
                     <div class="detail-item"><strong>Habilidades</strong><span style="text-transform:capitalize">${p.abilities[0].ability.name}</span></div>
-                    <div class="detail-item"><strong>Felicidade</strong><span>${s.base_happiness}</span></div>
                 </div>
 
                 <div class="stat-label">Status Base</div>
@@ -101,7 +119,6 @@ function renderFullCard(p, s, evo, damageData) {
         </article>`;
 }
 
-// Eventos de Interface (Mantidos conforme sua estrutura funcional)
 searchInput?.addEventListener('input', () => {
     const val = searchInput.value.toLowerCase().trim();
     box.innerHTML = '';
