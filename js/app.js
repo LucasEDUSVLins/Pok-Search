@@ -19,21 +19,16 @@ const clearBtn = document.getElementById('clearSearch');
 if (localStorage.getItem('dark-theme') === 'true') document.body.classList.add('dark-mode');
 
 async function initSearch() {
-    const cachedNames = localStorage.getItem('pokeNamesCache');
-
-    if (cachedNames) {
-        allPokemonNames = JSON.parse(cachedNames);
-        console.log("Sugestões carregadas do cache local.");
+    const cached = localStorage.getItem('pokeNamesCache');
+    if (cached) {
+        allPokemonNames = JSON.parse(cached);
     } else {
         try {
             const res = await fetch(`${POKE_API}pokemon?limit=1025`);
             const data = await res.json();
             allPokemonNames = data.results.map(p => p.name);
             localStorage.setItem('pokeNamesCache', JSON.stringify(allPokemonNames));
-            console.log("Cache criado pela primeira vez.");
-        } catch (err) {
-            console.error("Erro ao carregar nomes da API", err);
-        }
+        } catch (err) { console.error("Erro no Cache"); }
     }
 }
 
@@ -42,29 +37,26 @@ async function findElite() {
     const query = searchInput.value.toLowerCase().trim();
     if (!query) return;
 
-    grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">ELITE FINDER: COMPARANDO VARIANTES...</p>`;
+    grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#cbd5e1;">ELITE FINDER: ANALISANDO VARIANTES...</p>`;
 
     try {
         const species = await fetch(`${POKE_API}pokemon-species/${query}`).then(r => r.json());
+        const varietiesData = await Promise.all(species.varieties.map(v => fetch(v.pokemon.url).then(r => r.json())));
 
-        const varietiesData = await Promise.all(
-            species.varieties.map(v => fetch(v.pokemon.url).then(r => r.json()))
-        );
-
-        const eliteVariant = varietiesData.reduce((prev, current) => {
-            const prevBST = prev.stats.reduce((acc, s) => acc + s.base_stat, 0);
-            const currBST = current.stats.reduce((acc, s) => acc + s.base_stat, 0);
-            return (currBST > prevBST) ? current : prev;
+        const elite = varietiesData.reduce((prev, curr) => {
+            const prevBST = prev.stats.reduce((a, s) => a + s.base_stat, 0);
+            const currBST = curr.stats.reduce((a, s) => a + s.base_stat, 0);
+            return (currBST > prevBST) ? curr : prev;
         });
 
         const [evoRes, damageData] = await Promise.all([
             fetch(species.evolution_chain.url).then(r => r.json()),
-            Promise.all(eliteVariant.types.map(t => fetch(t.type.url).then(r => r.json())))
+            Promise.all(elite.types.map(t => fetch(t.type.url).then(r => r.json())))
         ]);
 
-        renderFullCard(eliteVariant, species, evoRes, damageData);
+        renderFullCard(elite, species, evoRes, damageData);
     } catch (err) {
-        grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">ERRO NO SCANNER ELITE</p>`;
+        grid.innerHTML = `<p style="text-align:center; padding:50px; font-weight:900; color:#f87171;">POKÉMON NÃO ENCONTRADO</p>`;
     }
 }
 
@@ -74,20 +66,18 @@ function renderFullCard(p, s, evo, damageData) {
     const color = COLORS[mainType] || ['#94a3b8', '#475569'];
     const bst = p.stats.reduce((acc, stat) => acc + stat.base_stat, 0);
 
-    const weaknesses = new Set();
-    const resistances = new Set();
-
+    const weak = new Set(), res = new Set();
     damageData.forEach(d => {
-        d.damage_relations.double_damage_from.forEach(t => weaknesses.add(t.name));
-        d.damage_relations.half_damage_from.forEach(t => resistances.add(t.name));
-        d.damage_relations.no_damage_from.forEach(t => resistances.add(t.name));
+        d.damage_relations.double_damage_from.forEach(t => weak.add(t.name));
+        d.damage_relations.half_damage_from.forEach(t => res.add(t.name));
+        d.damage_relations.no_damage_from.forEach(t => res.add(t.name));
     });
 
-    const finalWeak = Array.from(weaknesses).filter(w => !resistances.has(w));
-    const finalRes = Array.from(resistances).filter(r => !weaknesses.has(r));
+    const finalWeak = Array.from(weak).filter(w => !res.has(w));
+    const finalRes = Array.from(res).filter(r => !weak.has(r));
 
-    const weakHtml = finalWeak.map(w => `<span class="type-badge" style="background:${COLORS[w]?.[0] || '#ccc'}">${w.toUpperCase()}</span>`).join('');
-    const resHtml = finalRes.map(r => `<span class="type-badge" style="background:${COLORS[r]?.[1] || '#444'}">${r.toUpperCase()}</span>`).join('');
+    const weakHtml = finalWeak.map(w => `<span class="type-badge" style="background:${COLORS[w]?.[0]}">${w.toUpperCase()}</span>`).join('');
+    const resHtml = finalRes.map(r => `<span class="type-badge" style="background:${COLORS[r]?.[1]}">${r.toUpperCase()}</span>`).join('');
     const typesHtml = p.types.map(t => `<span style="color: ${COLORS[t.type.name][0]}">${t.type.name.toUpperCase()}</span>`).join(' / ');
 
     grid.innerHTML = `
@@ -97,14 +87,8 @@ function renderFullCard(p, s, evo, damageData) {
             </div>
             <div class="card-info">
                 <div class="title-row">
-                    <div>
-                        <p class="tagline">ID #${p.id} • ${typesHtml}</p>
-                        <h2 class="name">${p.name}</h2>
-                    </div>
-                    <div style="text-align:right; min-width: 100px;">
-                        <span class="bst-num">${bst}</span>
-                        <p class="tagline" style="margin-top: 5px;">BST TOTAL</p>
-                    </div>
+                    <div><p class="tagline">ID #${p.id} • ${typesHtml}</p><h2 class="name">${p.name.replace('-', ' ')}</h2></div>
+                    <div style="text-align:right; min-width: 100px;"><span class="bst-num">${bst}</span><p class="tagline" style="margin-top:5px">BST TOTAL</p></div>
                 </div>
                 <div class="go-details-grid">
                     <div class="detail-item"><strong>Fraquezas</strong><div>${weakHtml || 'Nenhuma'}</div></div>
@@ -114,10 +98,8 @@ function renderFullCard(p, s, evo, damageData) {
                 </div>
                 <div class="stat-label">Status Base</div>
                 <div class="stats-row">
-                    <p><strong>HP</strong> ${p.stats[0].base_stat}</p>
-                    <p><strong>ATK</strong> ${p.stats[1].base_stat}</p>
-                    <p><strong>DEF</strong> ${p.stats[2].base_stat}</p>
-                    <p><strong>SPD</strong> ${p.stats[5].base_stat}</p>
+                    <p><strong>HP</strong> ${p.stats[0].base_stat}</p><p><strong>ATK</strong> ${p.stats[1].base_stat}</p>
+                    <p><strong>DEF</strong> ${p.stats[2].base_stat}</p><p><strong>SPD</strong> ${p.stats[5].base_stat}</p>
                 </div>
             </div>
         </article>`;
@@ -127,7 +109,6 @@ searchInput?.addEventListener('input', () => {
     const val = searchInput.value.toLowerCase().trim();
     box.innerHTML = '';
     clearBtn.style.display = val.length > 0 ? 'block' : 'none';
-
     if (val.length > 0) {
         const matches = allPokemonNames.filter(n => n.includes(val)).slice(0, 6);
         if (matches.length > 0) {
