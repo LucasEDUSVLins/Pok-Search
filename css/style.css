@@ -353,6 +353,14 @@ body.dark-mode .suggestions-list {
     border-color: #334155;
 }
 
+.name {
+    position: relative;
+}
+
+body.dark-mode .name {
+    text-shadow: 0 0 15px rgba(37, 99, 235, 0.4);
+}
+
 @keyframes jump-once {
 
     0%,
