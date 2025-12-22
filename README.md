@@ -1,47 +1,30 @@
-# 🍍 PokéSearch - Encontre sua Elite
+# 🚀 PokéSearch - Scanner de Atributos Elite
 
-![GitHub repo size](https://img.shields.io/github/repo-size/lucasedusvlins/Pok-Meta?style=for-the-badge)
-![GitHub language count](https://img.shields.io/github/languages/count/lucasedusvlins/Pok-Meta?style=for-the-badge)
-![GitHub last commit](https://img.shields.io/github/last-commit/lucasedusvlins/Pok-Meta?style=for-the-badge)
+O **PokéSearch** é uma ferramenta técnica de alta performance para treinadores que procuram a "Elite" de cada espécie. O sistema não apenas pesquisa dados, mas realiza um "raio-x" completo, comparando variantes (Mega, Gigantamax, Regionais) para exibir sempre a forma com o maior **BST (Base Stat Total)**.
 
-O **PokéSearch** é uma aplicação web moderna e responsiva projetada para treinadores que buscam a "Elite" de cada espécie. O sistema analisa as variantes de um Pokémon e exibe automaticamente a forma com o maior **Base Stat Total (BST)**.
+## 🛠️ Funcionalidades Elite
 
-[**✨ Ver Demonstração Ao Vivo**](https://lucasedusvlins.github.io/Pok-Search/)
+- **Elite Finder (Algoritmo de Comparação)**: Analisa automaticamente todas as variações de um Pokémon e destaca a variante estatisticamente superior.
+- **Scanner de Atributos**: Mapeia em tempo real fraquezas, resistências, habilidades e status base.
+- **Cache Inteligente**: Armazenamento local (LocalStorage) da lista de 1025 Pokémon para sugestões instantâneas na busca.
+- **Monitor de Status**: Indicador visual no rodapé que monitora a latência e estabilidade da conexão com a API.
+- **PWA Ready**: Instalável como aplicativo nativo no telemóvel ou desktop.
+- **Dark Mode Nativo**: Interface adaptável que preserva a preferência do utilizador.
 
----
+## 📂 Estrutura do Projeto
 
-## 🚀 Funcionalidades
+- `index.html`: Interface principal com Scanner e Monitor de Status.
+- `privacidade.html` & `termos.html`: Páginas de conformidade com o mesmo design do projeto.
+- `css/style.css`: Estilização moderna com Glassmorphism e suporte a temas.
+- `js/app.js`: Motor de lógica, cache e análise de dados.
+- `manifest.json`: Configurações de instalação para Web App.
 
-- **Busca Inteligente:** Sugestões em tempo real conforme você digita.
-- **Elite Finder:** Algoritmo que compara formas (Mega, Gigantamax, Alola, etc.) e entrega a mais forte.
-- **Visual Premium:** Design com Glassmorphism, bordas arredondadas e ícones dinâmicos.
-- **Animações Reativas:** Pinap Berry animada que reage às suas buscas.
-- **Modo Escuro (Dark Mode):** Alternância de tema com persistência via `localStorage`.
-- **Mobile First:** Totalmente otimizado para dispositivos móveis com scrollbars ocultos e interface limpa.
+## 🚀 Como Executar
 
----
+1. Clone o repositório.
+2. Abra o `index.html` em qualquer navegador moderno.
+3. (Opcional) Instale como App através do ícone na barra de endereços.
 
-## 🛠️ Tecnologias Utilizadas
+## ⚖️ Licença e Termos
 
-O projeto foi construído utilizando tecnologias web puras para máxima performance:
-
-* **HTML5 & CSS3:** Estrutura e estilização avançada com animações `@keyframes`.
-* **JavaScript (ES6+):** Lógica de consumo de API assíncrona (`Fetch API`).
-* **PokéAPI:** Fonte de dados em tempo real sobre o universo Pokémon.
-* **Google Fonts:** Tipografia 'Inter' para uma leitura moderna.
-
----
-
-## 🎨 Interface
-
-| Tema Claro | Tema Escuro |
-| :---: | :---: |
-| ![Light Mode](https://via.placeholder.com/300x200?text=Light+Mode+Preview) | ![Dark Mode](https://via.placeholder.com/300x200?text=Dark+Mode+Preview) |
-
----
-
-## 📦 Como rodar o projeto localmente
-
-1. Clone o repositório:
-   ```bash
-   git clone [https://github.com/lucasedusvlins/Pok-Meta.git](https://github.com/lucasedusvlins/Pok-Meta.git)
+Este projeto utiliza a **PokéAPI** como fonte de dados. Os dados e imagens dos Pokémon são propriedade da Nintendo, Game Freak e Creatures Inc. Este é um projeto de fã, sem fins lucrativos.
