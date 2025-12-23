@@ -37,7 +37,7 @@ const chefesAtuais = [
 
 window.togglePerfil = function () {
   const modal = document.getElementById("modal-perfil");
-  modal.style.display = modal.style.display === "none" ? "flex" : "none";
+  modal.style.display = modal.style.display === "flex" ? "none" : "flex";
 };
 
 window.salvarPerfil = function () {
@@ -58,8 +58,7 @@ window.abrirModalHost = function () {
     window.togglePerfil();
     return;
   }
-  const modal = document.getElementById("modal-host");
-  modal.style.display = "flex";
+  document.getElementById("modal-host").style.display = "flex";
   carregarChefesNoFormulario();
 };
 
