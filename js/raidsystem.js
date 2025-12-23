@@ -32,32 +32,36 @@ const chefesAtuais = [
   "kyogre",
 ];
 
-// --- CONFIGURAÇÃO DAS LISTAS ---
 function configurarListasSelect() {
   const levelSelect = document.getElementById("pogo-level");
   const timeSelect = document.getElementById("raid-time-select");
   const bossSelect = document.getElementById("boss-select-list");
+  const capacitySelect = document.getElementById("raid-capacity");
 
   if (levelSelect && levelSelect.options.length === 0) {
     for (let i = 1; i <= 80; i++) {
       let val = i < 10 ? `0${i}` : i;
-      let opt = new Option(val, val);
-      levelSelect.add(opt);
+      levelSelect.add(new Option(val, val));
     }
+  }
+
+  if (capacitySelect && capacitySelect.options.length === 0) {
+    for (let i = 1; i <= 20; i++) {
+      let val = i < 10 ? `0${i}` : i;
+      capacitySelect.add(new Option(`${val} Vagas`, i));
+    }
+    capacitySelect.value = "5"; // Padrão
   }
 
   if (timeSelect && timeSelect.options.length === 0) {
     for (let i = 5; i <= 60; i += 5) {
-      let opt = new Option(`${i} min`, i);
-      timeSelect.add(opt);
+      timeSelect.add(new Option(`${i} min`, i));
     }
   }
-
   if (bossSelect && bossSelect.options.length === 0) {
-    chefesAtuais.forEach((nome) => {
-      let opt = new Option(nome.toUpperCase(), nome);
-      bossSelect.add(opt);
-    });
+    chefesAtuais.forEach((nome) =>
+      bossSelect.add(new Option(nome.toUpperCase(), nome))
+    );
   }
 }
 
@@ -65,7 +69,10 @@ configurarListasSelect();
 
 window.togglePerfil = function () {
   const modal = document.getElementById("modal-perfil");
-  modal.style.display = modal.style.display === "flex" ? "none" : "flex";
+  modal.style.display =
+    modal.style.display === "none" || modal.style.display === ""
+      ? "flex"
+      : "none";
 };
 
 window.salvarPerfil = function () {
@@ -80,15 +87,14 @@ window.salvarPerfil = function () {
   window.togglePerfil();
 };
 
-// --- CRIAÇÃO DE HOST ---
 window.abrirModalHost = function () {
   if (!localStorage.getItem("pogo_perfil")) {
     alert("Configure seu Perfil primeiro!");
     window.togglePerfil();
     return;
   }
-  document.getElementById("modal-host").style.display = "flex";
   configurarListasSelect();
+  document.getElementById("modal-host").style.display = "flex";
 };
 
 window.fecharModalHost = function () {
