@@ -58,7 +58,8 @@ window.abrirModalHost = function () {
     window.togglePerfil();
     return;
   }
-  document.getElementById("modal-host").style.display = "flex";
+  const modal = document.getElementById("modal-host");
+  modal.style.display = "flex";
   carregarChefesNoFormulario();
 };
 

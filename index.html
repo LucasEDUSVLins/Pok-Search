@@ -43,20 +43,16 @@
         </div>
 
         <section id="raid-system" class="container mt-4">
-            <div class="raid-buttons-row d-flex gap-2">
-                <button class="btn-pogo-blue w-50" onclick="window.togglePerfil()">
+            <div class="raid-controls">
+                <button class="theme-btn btn-action" onclick="window.togglePerfil()">
                     <i class="bi bi-person-circle"></i> Perfil
                 </button>
-                <button class="btn-pogo-yellow w-50" onclick="window.abrirModalHost()">
+                <button class="theme-btn btn-action btn-primary-elite" onclick="window.abrirModalHost()">
                     <i class="bi bi-plus-circle"></i> Criar HOST
                 </button>
             </div>
 
-            <div class="raid-header mt-4">
-                <h5 class="m-0 text-warning"><i class="bi bi-broadcast"></i> Raids em Direto</h5>
-            </div>
-
-            <div id="container-hosts" class="hosts-grid mt-2">
+            <div id="container-hosts" class="hosts-list mt-3">
                 <p class="text-center text-secondary">Procurando raids ativas...</p>
             </div>
         </section>
@@ -114,7 +110,15 @@
 
     <main id="grid" class="main-content"></main>
 
-    <footer class="main-footer"></footer>
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="privacidade.html">Política de Privacidade</a>
+                <a href="termos.html">Termos de Uso</a>
+            </div>
+            <p class="copyright">&copy; 2025 PokéSearch - Scanner Elite</p>
+        </div>
+    </footer>
 
     <script src="js/app.js" defer></script>
     <script type="module" src="js/raidsystem.js"></script>
