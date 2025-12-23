@@ -23,9 +23,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-window.selectedBossName = "";
-window.selectedLevelReq = "Qualquer";
-
 const chefesAtuais = [
   "charizard",
   "blastoise",
@@ -34,6 +31,37 @@ const chefesAtuais = [
   "groudon",
   "kyogre",
 ];
+
+// --- CONFIGURAÇÃO DAS LISTAS ---
+function configurarListasSelect() {
+  const levelSelect = document.getElementById("pogo-level");
+  const timeSelect = document.getElementById("raid-time-select");
+  const bossSelect = document.getElementById("boss-select-list");
+
+  if (levelSelect && levelSelect.options.length === 0) {
+    for (let i = 1; i <= 80; i++) {
+      let val = i < 10 ? `0${i}` : i;
+      let opt = new Option(val, val);
+      levelSelect.add(opt);
+    }
+  }
+
+  if (timeSelect && timeSelect.options.length === 0) {
+    for (let i = 5; i <= 60; i += 5) {
+      let opt = new Option(`${i} min`, i);
+      timeSelect.add(opt);
+    }
+  }
+
+  if (bossSelect && bossSelect.options.length === 0) {
+    chefesAtuais.forEach((nome) => {
+      let opt = new Option(nome.toUpperCase(), nome);
+      bossSelect.add(opt);
+    });
+  }
+}
+
+configurarListasSelect();
 
 window.togglePerfil = function () {
   const modal = document.getElementById("modal-perfil");
@@ -48,10 +76,11 @@ window.salvarPerfil = function () {
   };
   if (!perfil.name || !perfil.code) return alert("Preencha nome e código!");
   localStorage.setItem("pogo_perfil", JSON.stringify(perfil));
-  alert("Perfil salvo!");
+  alert("Perfil salvo com sucesso!");
   window.togglePerfil();
 };
 
+// --- CRIAÇÃO DE HOST ---
 window.abrirModalHost = function () {
   if (!localStorage.getItem("pogo_perfil")) {
     alert("Configure seu Perfil primeiro!");
@@ -59,73 +88,28 @@ window.abrirModalHost = function () {
     return;
   }
   document.getElementById("modal-host").style.display = "flex";
-  carregarChefesNoFormulario();
+  configurarListasSelect();
 };
 
 window.fecharModalHost = function () {
   document.getElementById("modal-host").style.display = "none";
 };
 
-async function carregarChefesNoFormulario() {
-  const container = document.getElementById("boss-list");
-  if (!container) return;
-  container.innerHTML = "Carregando...";
-
-  for (const nome of chefesAtuais) {
-    try {
-      const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${nome}`);
-      const data = await response.json();
-      const imgUrl = data.sprites.other["official-artwork"].front_default;
-
-      const div = document.createElement("div");
-      div.className = "boss-item";
-      div.onclick = function () {
-        window.selectBoss(this, data.name);
-      };
-      div.innerHTML = `
-                <img src="${imgUrl}" alt="${data.name}">
-                <p class="small m-0 text-capitalize">${data.name}</p>
-            `;
-      container.appendChild(div);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  if (container.firstChild && container.firstChild.nodeType === 3)
-    container.firstChild.remove();
-}
-
-window.selectBoss = function (element, name) {
-  document
-    .querySelectorAll(".boss-item")
-    .forEach((el) => el.classList.remove("selected"));
-  element.classList.add("selected");
-  window.selectedBossName = name;
-};
-
-window.selectLevel = function (element, level) {
-  document
-    .querySelectorAll(".lvl-btn")
-    .forEach((el) => el.classList.remove("btn-warning", "text-dark"));
-  element.classList.add("btn-warning", "text-dark");
-  window.selectedLevelReq = level;
-};
-
 window.publicarHost = function () {
   const perfil = JSON.parse(localStorage.getItem("pogo_perfil"));
-  const time = document.getElementById("raid-time").value;
+  const boss = document.getElementById("boss-select-list").value;
+  const time = document.getElementById("raid-time-select").value;
   const capacity = parseInt(document.getElementById("raid-capacity").value);
 
-  if (!window.selectedBossName || !time)
-    return alert("Selecione o Chefe e o Tempo!");
+  if (!boss || !time) return alert("Preencha todos os campos!");
 
   const novaRaidRef = push(ref(db, "raids"));
   set(novaRaidRef, {
     id: novaRaidRef.key,
-    pokemonName: window.selectedBossName,
+    pokemonName: boss,
     tempo: time,
     capacidade: capacity,
-    nivelReq: window.selectedLevelReq,
+    nivelReq: "Qualquer",
     hostName: perfil.name,
     hostCode: perfil.code,
     jogadoresAtuais: 1,
@@ -155,13 +139,19 @@ function renderizarListaHosts(raids) {
   if (!container) return;
   container.innerHTML = "";
 
+  if (raids.length === 0) {
+    container.innerHTML =
+      '<p class="text-center text-secondary">Nenhuma raid disponível.</p>';
+    return;
+  }
+
   raids.forEach((raid) => {
     const percentual = (raid.jogadoresAtuais / raid.capacidade) * 100;
     const html = `
         <div class="card bg-dark border-secondary raid-card mb-2">
             <div class="card-body d-flex align-items-center p-2">
                 <div class="flex-grow-1">
-                    <h6 class="m-0 text-white text-capitalize">${raid.pokemonName} <span class="badge bg-secondary">${raid.nivelReq}</span></h6>
+                    <h6 class="m-0 text-white text-capitalize">${raid.pokemonName}</h6>
                     <p class="small text-secondary mb-0">Host: ${raid.hostName} • ${raid.tempo}min</p>
                     <div class="progress mt-1" style="height: 6px; background: #444;"><div class="progress-bar bg-warning" style="width: ${percentual}%"></div></div>
                     <small class="text-warning">${raid.jogadoresAtuais}/${raid.capacidade} Jogadores</small>
@@ -185,7 +175,7 @@ window.entrarNaRaid = function (id) {
       const hostActions = document.getElementById("host-actions");
       if (perfil && perfil.name === raid.hostName) {
         hostActions.style.display = "block";
-        hostActions.innerHTML = `<button class="btn btn-danger w-100" onclick="window.encerrarRaid('${id}')">ENCERRAR RAID</button>`;
+        hostActions.innerHTML = `<button class="theme-btn btn-danger-elite w-100" onclick="window.encerrarRaid('${id}')">ENCERRAR RAID</button>`;
       } else {
         hostActions.style.display = "none";
       }

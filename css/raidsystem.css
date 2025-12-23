@@ -1,4 +1,4 @@
-/* Container alinhado com a busca */
+
 .raid-container {
     max-width: 600px;
     margin: 20px auto;
@@ -11,14 +11,14 @@
     justify-content: center;
 }
 
-/* Faz os botões dividirem a largura da barra de pesquisa */
+
 .raid-controls .theme-btn {
     flex: 1;
     width: auto;
     margin: 0;
 }
 
-/* JANELA FLUTUANTE (MODAL) CENTRALIZADA */
+
 .custom-modal {
     position: fixed;
     top: 0;
@@ -27,7 +27,7 @@
     height: 100%;
     background: rgba(0, 0, 0, 0.85);
     display: none;
-    /* JS muda para flex */
+
     align-items: center;
     justify-content: center;
     z-index: 9999;
@@ -36,9 +36,9 @@
 
 .modal-content {
     background: #1a1a1a !important;
-    /* Fundo escuro do projeto */
+
     border: 2px solid #2563eb !important;
-    /* Azul elite */
+
     border-radius: 12px !important;
     padding: 20px;
     width: 90%;
@@ -46,7 +46,7 @@
     color: white;
 }
 
-/* ESTILO DOS CAMPOS DE PREENCHIMENTO */
+
 .modal-content input,
 .modal-content select {
     width: 100%;
@@ -57,47 +57,49 @@
     border-radius: 8px;
     color: white;
     font-size: 1rem;
-}
-
-.modal-content input:focus {
-    border-color: #2563eb;
     outline: none;
 }
 
-/* CORREÇÃO DAS IMAGENS GIGANTES */
-.boss-selector {
+.modal-content input:focus,
+.modal-content select:focus {
+    border-color: #2563eb;
+}
+
+.modal-content select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 20px;
+}
+
+.modal-content .theme-btn {
+    padding: 12px;
+    font-size: 0.9rem;
+    margin-top: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     display: flex;
-    overflow-x: auto;
-    gap: 10px;
-    padding: 10px;
-    background: #111;
-    border-radius: 8px;
-
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
 }
 
-.boss-item {
-    min-width: 60px;
-    text-align: center;
+.btn-primary-elite {
+    background: #2563eb !important;
+    color: white !important;
 }
 
-.boss-item img {
-    width: 40px !important;
-    height: 40px !important;
-    object-fit: contain;
-
+.btn-danger-elite {
+    background: #dc3545 !important;
+    color: white !important;
 }
 
-.boss-item p {
-    font-size: 0.6rem;
-    color: #aaa;
-}
 
-/* CARDS DA LISTA */
 .raid-card {
     background: rgba(255, 255, 255, 0.05) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
     border-radius: 8px !important;
-    padding: 10px;
+    padding: 15px;
     margin-top: 10px;
-    
+
 }

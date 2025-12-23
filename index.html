@@ -63,11 +63,48 @@
     <div id="modal-perfil" class="custom-modal" style="display:none;">
         <div class="modal-content card p-3">
             <h4>Meu Perfil Trainer</h4>
-            <input type="text" id="pogo-name" class="form-control mb-2" placeholder="Nome no Pokémon GO">
-            <input type="number" id="pogo-level" class="form-control mb-2" placeholder="Nível da Conta">
-            <input type="text" id="pogo-friend-code" class="form-control mb-2" placeholder="Código de Amizade">
-            <button class="btn btn-success w-100" onclick="window.salvarPerfil()">Salvar</button>
-            <button class="btn btn-link btn-sm" onclick="window.togglePerfil()">Fechar</button>
+            <input type="text" id="pogo-name" placeholder="Nome no Pokémon GO">
+
+            <label class="small text-secondary">Nível da Conta:</label>
+            <select id="pogo-level">
+            </select>
+
+            <input type="text" id="pogo-friend-code" placeholder="Código de Amizade">
+
+            <div class="d-flex gap-2 mt-2">
+                <button class="theme-btn btn-primary-elite w-100" onclick="window.salvarPerfil()">Salvar</button>
+                <button class="theme-btn w-100" onclick="window.togglePerfil()">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-host" class="custom-modal" style="display:none;">
+        <div class="modal-content card p-3 bg-dark text-white">
+            <h4 class="text-warning">Criar Novo HOST</h4>
+
+            <label class="small">Selecione o Chefe:</label>
+            <select id="boss-select-list">
+            </select>
+
+            <div class="row mt-2">
+                <div class="col-6">
+                    <label class="small">Inicia em (min):</label>
+                    <select id="raid-time-select">
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label class="small">Vagas:</label>
+                    <select id="raid-capacity">
+                        <option value="5">5 Jogadores</option>
+                        <option value="10">10 Jogadores</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mt-4 d-flex gap-2">
+                <button class="theme-btn btn-primary-elite w-100" onclick="window.publicarHost()">Publicar</button>
+                <button class="theme-btn btn-danger-elite w-100" onclick="window.fecharModalHost()">Cancelar</button>
+            </div>
         </div>
     </div>
 
