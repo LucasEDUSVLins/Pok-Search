@@ -71,9 +71,9 @@
 
             <input type="text" id="pogo-friend-code" placeholder="Código de Amizade">
 
-            <div class="d-flex gap-2 mt-2">
-                <button class="theme-btn btn-primary-elite w-100" onclick="window.salvarPerfil()">Salvar</button>
-                <button class="theme-btn w-100" onclick="window.togglePerfil()">Fechar</button>
+            <div class="modal-footer-buttons">
+                <button class="theme-btn btn-primary-elite" onclick="window.salvarPerfil()">Salvar</button>
+                <button class="theme-btn" onclick="window.togglePerfil()">Fechar</button>
             </div>
         </div>
     </div>
@@ -119,11 +119,19 @@
                     <input type="number" id="raid-time" class="form-control" placeholder="10">
                 </div>
                 <div class="col-6">
-                    <label class="small">Vagas:</label>
-                    <select id="raid-capacity" class="form-control">
-                        <option value="5">5 Jogadores</option>
-                        <option value="10">10 Jogadores</option>
+                    <label class="small">Vagas Disponíveis:</label>
+                    <select id="raid-capacity">
+                        <option value="1">01 Vaga</option>
+                        <option value="5" selected>05 Vagas</option>
+                        <option value="10">10 Vagas</option>
+                        <option value="15">15 Vagas</option>
+                        <option value="20">20 Vagas</option>
                     </select>
+
+                    <div class="modal-footer-buttons">
+                        <button class="theme-btn btn-primary-elite" onclick="window.publicarHost()">Publicar</button>
+                        <button class="theme-btn btn-danger-elite" onclick="window.fecharModalHost()">Cancelar</button>
+                    </div>
                 </div>
             </div>
             <div class="mt-4">

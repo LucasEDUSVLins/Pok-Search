@@ -141,23 +141,32 @@ function renderizarListaHosts(raids) {
 
   if (raids.length === 0) {
     container.innerHTML =
-      '<p class="text-center text-secondary">Nenhuma raid disponível.</p>';
+      '<p class="text-center text-secondary py-4">Nenhuma raid disponível no momento.</p>';
     return;
   }
 
   raids.forEach((raid) => {
     const percentual = (raid.jogadoresAtuais / raid.capacidade) * 100;
     const html = `
-        <div class="card bg-dark border-secondary raid-card mb-2">
-            <div class="card-body d-flex align-items-center p-2">
-                <div class="flex-grow-1">
-                    <h6 class="m-0 text-white text-capitalize">${raid.pokemonName}</h6>
-                    <p class="small text-secondary mb-0">Host: ${raid.hostName} • ${raid.tempo}min</p>
-                    <div class="progress mt-1" style="height: 6px; background: #444;"><div class="progress-bar bg-warning" style="width: ${percentual}%"></div></div>
-                    <small class="text-warning">${raid.jogadoresAtuais}/${raid.capacidade} Jogadores</small>
+        <div class="raid-card">
+            <div class="raid-info">
+                <h6>${raid.pokemonName}</h6>
+                <div class="raid-details">
+                    <span>Host: <strong>${raid.hostName}</strong></span><br>
+                    <span>Termina em: ${raid.tempo} min</span>
                 </div>
-                <button class="btn btn-primary btn-sm ms-2" onclick="window.entrarNaRaid('${raid.id}')">Entrar</button>
             </div>
+            
+            <div class="raid-status-bar">
+                <div class="progress-mini">
+                    <div class="progress-fill" style="width: ${percentual}%"></div>
+                </div>
+                <small>${raid.jogadoresAtuais}/${raid.capacidade}</small>
+            </div>
+
+            <button class="btn-entrar" onclick="window.entrarNaRaid('${raid.id}')">
+                ENTRAR
+            </button>
         </div>`;
     container.insertAdjacentHTML("beforeend", html);
   });
