@@ -1,0 +1,110 @@
+.boss-selector {
+    display: flex;
+    overflow-x: auto;
+    gap: 10px;
+    padding: 10px 0;
+    scrollbar-width: thin;
+}
+
+.boss-item {
+    min-width: 100px;
+    border: 2px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s;
+    background: #2a2a2a;
+    text-align: center;
+    padding: 5px;
+}
+
+.boss-item img {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+}
+
+.boss-item.selected {
+    border-color: #ffcb05;
+    background: #3a3a3a;
+}
+
+.custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-content {
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.boss-item.selected img {
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 8px #ffcb05);
+}
+
+.boss-item p {
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: #bbb;
+}
+
+.boss-item.selected p {
+    color: #ffcb05;
+}
+
+.raid-card {
+    transition: transform 0.2s;
+    border-left: 4px solid #ffcb05 !important;
+    /* Cor de destaque Pokémon */
+}
+
+.raid-card:active {
+    transform: scale(0.98);
+}
+
+.progress-bar {
+    transition: width 0.5s ease-in-out;
+}
+
+#container-hosts {
+    max-height: 500px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.letter-spacing-2 {
+    letter-spacing: 3px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.copy-success-anim {
+    animation: bounce 0.5s ease;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+#player-list-lobby {
+    max-height: 200px;
+    overflow-y: auto;
+}
