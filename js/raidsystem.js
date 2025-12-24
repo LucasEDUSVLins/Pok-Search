@@ -229,32 +229,66 @@ window.abrirSalaLobby = function (id) {
 
     const playerListDiv = document.getElementById("player-list-lobby");
     const lista = raid.listaJogadores ? Object.values(raid.listaJogadores) : [];
+    const prontos = raid.prontos || {};
 
     playerListDiv.innerHTML = lista
-      .map(
-        (nome) =>
-          `<div class="player-slot">
-                <span><i class="bi bi-person-fill"></i> ${nome}</span>
-                ${
-                  nome === raid.hostName
-                    ? '<span class="badge bg-warning text-dark">HOST</span>'
-                    : ""
-                }
-            </div>`
-      )
+      .map((nome) => {
+        const estaPronto = prontos[nome] ? "player-ready" : "";
+        const icone = prontos[nome]
+          ? '<i class="bi bi-check-circle-fill"></i>'
+          : '<i class="bi bi-person-fill"></i>';
+        return `
+                <div class="player-slot ${estaPronto}">
+                    <span>${icone} ${nome}</span>
+                    ${
+                      nome === raid.hostName
+                        ? '<span class="badge-host">HOST</span>'
+                        : ""
+                    }
+                </div>`;
+      })
       .join("");
 
-    const hostActions = document.getElementById("host-actions");
+    const lobbyActions = document.getElementById("lobby-actions");
     if (perfil && perfil.name === raid.hostName) {
-      hostActions.style.display = "block";
-      hostActions.innerHTML = `<button class="theme-btn btn-danger-elite w-100" onclick="window.encerrarRaid('${id}')">ENCERRAR RAID</button>`;
+      lobbyActions.innerHTML = `<button class="theme-btn btn-danger-elite w-100" onclick="window.encerrarRaid('${id}')">ENCERRAR RAID</button>`;
     } else {
-      hostActions.style.display = "none";
+      const textoBotao = prontos[perfil.name]
+        ? "ESTOU PRONTO!"
+        : "MARCAR COMO PRONTO";
+      const classeBotao = prontos[perfil.name]
+        ? "btn-success-elite"
+        : "btn-outline-success";
+      lobbyActions.innerHTML = `<button class="theme-btn ${classeBotao} w-100" onclick="window.togglePronto('${id}')">${textoBotao}</button>`;
     }
+
     document.getElementById("modal-sala-raid").style.display = "flex";
   });
 };
 
 window.sairDaSala = function () {
   document.getElementById("modal-sala-raid").style.display = "none";
+};
+
+window.copiarCodigo = function () {
+  const codigo = document.getElementById("host-code-display").innerText;
+  navigator.clipboard.writeText(codigo.replace(/\s/g, "")).then(() => {
+    alert("Código copiado! Adicione no Pokémon GO.");
+  });
+};
+
+window.togglePronto = function (raidId) {
+  const perfil = JSON.parse(localStorage.getItem("pogo_perfil"));
+  const raidRef = ref(db, `raids/${raidId}`);
+
+  get(raidRef).then((snapshot) => {
+    if (snapshot.exists()) {
+      const raid = snapshot.val();
+      const prontos = raid.prontos || {};
+
+      prontos[perfil.name] = !prontos[perfil.name];
+
+      set(ref(db, `raids/${raidId}/prontos`), prontos);
+    }
+  });
 };
