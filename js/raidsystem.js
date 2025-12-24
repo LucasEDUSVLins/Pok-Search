@@ -111,8 +111,10 @@ window.publicarHost = function () {
   if (!boss || !time) return alert("Preencha todos os campos!");
 
   const novaRaidRef = push(ref(db, "raids"));
-  set(novaRaidRef, {
-    id: novaRaidRef.key,
+  const raidId = novaRaidRef.key;
+
+  const dadosRaid = {
+    id: raidId,
     pokemonName: boss,
     tempo: time,
     capacidade: capacity,
@@ -120,10 +122,13 @@ window.publicarHost = function () {
     hostName: perfil.name,
     hostCode: perfil.code,
     jogadoresAtuais: 1,
+    listaJogadores: [perfil.name],
     timestamp: Date.now(),
-  }).then(() => {
+  };
+
+  set(novaRaidRef, dadosRaid).then(() => {
     window.fecharModalHost();
-    alert("RAID Publicada!");
+    window.abrirSalaLobby(raidId);
   });
 };
 
@@ -180,22 +185,73 @@ function renderizarListaHosts(raids) {
 }
 
 window.entrarNaRaid = function (id) {
+  const perfil = JSON.parse(localStorage.getItem("pogo_perfil"));
+  if (!perfil) return window.togglePerfil();
+
   const raidRef = ref(db, `raids/${id}`);
+
   get(raidRef).then((snapshot) => {
     if (snapshot.exists()) {
       const raid = snapshot.val();
-      document.getElementById("host-code-display").innerText = raid.hostCode;
-      document.getElementById("modal-sala-raid").style.display = "flex";
+      const jaEstaNaLista =
+        raid.listaJogadores &&
+        Object.values(raid.listaJogadores).includes(perfil.name);
 
-      const perfil = JSON.parse(localStorage.getItem("pogo_perfil"));
-      const hostActions = document.getElementById("host-actions");
-      if (perfil && perfil.name === raid.hostName) {
-        hostActions.style.display = "block";
-        hostActions.innerHTML = `<button class="theme-btn btn-danger-elite w-100" onclick="window.encerrarRaid('${id}')">ENCERRAR RAID</button>`;
-      } else {
-        hostActions.style.display = "none";
+      if (!jaEstaNaLista && raid.jogadoresAtuais >= raid.capacidade) {
+        return alert("Esta RAID já está lotada!");
       }
+
+      if (!jaEstaNaLista) {
+        const novaLista = raid.listaJogadores
+          ? [...Object.values(raid.listaJogadores), perfil.name]
+          : [raid.hostName, perfil.name];
+        set(ref(db, `raids/${id}/listaJogadores`), novaLista);
+        set(ref(db, `raids/${id}/jogadoresAtuais`), novaLista.length);
+      }
+      window.abrirSalaLobby(id);
     }
+  });
+};
+
+window.abrirSalaLobby = function (id) {
+  const raidRef = ref(db, `raids/${id}`);
+  onValue(raidRef, (snapshot) => {
+    if (!snapshot.exists()) {
+      window.sairDaSala();
+      return;
+    }
+    const raid = snapshot.val();
+    const perfil = JSON.parse(localStorage.getItem("pogo_perfil"));
+
+    document.getElementById("host-code-display").innerText = raid.hostCode;
+    document.getElementById("count-sala").innerText = raid.jogadoresAtuais;
+    document.getElementById("max-sala").innerText = raid.capacidade;
+
+    const playerListDiv = document.getElementById("player-list-lobby");
+    const lista = raid.listaJogadores ? Object.values(raid.listaJogadores) : [];
+
+    playerListDiv.innerHTML = lista
+      .map(
+        (nome) =>
+          `<div class="player-slot">
+                <span><i class="bi bi-person-fill"></i> ${nome}</span>
+                ${
+                  nome === raid.hostName
+                    ? '<span class="badge bg-warning text-dark">HOST</span>'
+                    : ""
+                }
+            </div>`
+      )
+      .join("");
+
+    const hostActions = document.getElementById("host-actions");
+    if (perfil && perfil.name === raid.hostName) {
+      hostActions.style.display = "block";
+      hostActions.innerHTML = `<button class="theme-btn btn-danger-elite w-100" onclick="window.encerrarRaid('${id}')">ENCERRAR RAID</button>`;
+    } else {
+      hostActions.style.display = "none";
+    }
+    document.getElementById("modal-sala-raid").style.display = "flex";
   });
 };
 

@@ -183,3 +183,34 @@
     display: flex;
     flex-direction: column;
 }
+
+.alert-instructions {
+    background: rgba(37, 99, 235, 0.1);
+    border-left: 4px solid #2563eb;
+    padding: 12px;
+    border-radius: 0 8px 8px 0;
+}
+
+.player-list-container {
+    background: #111;
+    border-radius: 8px;
+    margin-top: 5px;
+    max-height: 140px;
+    overflow-y: auto;
+}
+
+.player-slot {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 15px;
+    border-bottom: 1px solid #222;
+}
+
+.player-slot:last-child {
+    border-bottom: none;
+}
+
+.letter-spacing-2 {
+    letter-spacing: 2px;
+    font-family: 'Courier New', Courier, monospace;
+}
