@@ -50,7 +50,7 @@ function configurarListasSelect() {
       let val = i < 10 ? `0${i}` : i;
       capacitySelect.add(new Option(`${val} Vagas`, i));
     }
-    capacitySelect.value = "5"; // Padrão
+    capacitySelect.value = "5";
   }
 
   if (timeSelect && timeSelect.options.length === 0) {
@@ -58,6 +58,7 @@ function configurarListasSelect() {
       timeSelect.add(new Option(`${i} min`, i));
     }
   }
+
   if (bossSelect && bossSelect.options.length === 0) {
     chefesAtuais.forEach((nome) =>
       bossSelect.add(new Option(nome.toUpperCase(), nome))

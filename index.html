@@ -66,8 +66,7 @@
             <input type="text" id="pogo-name" placeholder="Nome no Pokémon GO">
 
             <label class="small text-secondary">Nível da Conta:</label>
-            <select id="pogo-level">
-            </select>
+            <select id="pogo-level"></select>
 
             <input type="text" id="pogo-friend-code" placeholder="Código de Amizade">
 
@@ -78,36 +77,27 @@
         </div>
     </div>
 
-
-    <div id="modal-host" class="custom-modal" style="display:none;">
-        <div class="modal-content card p-3 bg-dark text-white">
+    <div id="modal-host" class="custom-modal">
+        <div class="modal-content">
             <h4 class="text-warning">Criar Novo HOST</h4>
-            <label class="small">Selecione o Chefe:</label>
-            <div class="boss-selector" id="boss-list"></div>
-            <div class="row mt-3">
-                <div class="col-6">
-                    <label class="small">Inicia em (min):</label>
-                    <input type="number" id="raid-time" class="form-control" placeholder="10">
-                </div>
-                <div class="col-6">
-                    <label class="small">Vagas Disponíveis:</label>
-                    <select id="raid-capacity">
-                        <option value="1">01 Vaga</option>
-                        <option value="5" selected>05 Vagas</option>
-                        <option value="10">10 Vagas</option>
-                        <option value="15">15 Vagas</option>
-                        <option value="20">20 Vagas</option>
-                    </select>
 
-                    <div class="modal-footer-buttons">
-                        <button class="theme-btn btn-primary-elite" onclick="window.publicarHost()">Publicar</button>
-                        <button class="theme-btn btn-danger-elite" onclick="window.fecharModalHost()">Cancelar</button>
-                    </div>
+            <label class="small">Selecione o Chefe:</label>
+            <select id="boss-select-list"></select>
+
+            <div class="row-inputs">
+                <div class="input-group">
+                    <label class="small">Inicia em:</label>
+                    <select id="raid-time-select"></select>
+                </div>
+                <div class="input-group">
+                    <label class="small">Vagas:</label>
+                    <select id="raid-capacity"></select>
                 </div>
             </div>
-            <div class="mt-4">
-                <button class="btn btn-primary w-100 mb-2" onclick="window.publicarHost()">Publicar</button>
-                <button class="btn btn-outline-danger w-100" onclick="window.fecharModalHost()">Cancelar</button>
+
+            <div class="modal-footer-buttons">
+                <button class="theme-btn btn-primary-elite" onclick="window.publicarHost()">Publicar</button>
+                <button class="theme-btn btn-danger-elite" onclick="window.fecharModalHost()">Cancelar</button>
             </div>
         </div>
     </div>
